@@ -14,7 +14,7 @@ class NeuralNetwork{
         int num_of_outputs;
         int num_of_hidden_layers;
         // use interval type for offset and scale_factor
-        // If needed, please declare the access of each matrix as a long double
+        // If needed, please declare the access of each matrix as a double
         Interval offset;
         Interval scale_factor;
         // include hidden layers and output layer
