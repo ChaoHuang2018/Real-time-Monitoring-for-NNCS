@@ -18,7 +18,7 @@ class NeuralNetwork{
         Interval offset;
         Interval scale_factor;
         // include hidden layers and output layer
-        Layer layers[num_of_hidden_layers+1];
+        vector<Layer> layers;
 
 }
 

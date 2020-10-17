@@ -16,44 +16,43 @@ Activation::Activation(string act, Interval in, Interval in_bound) {
 }
 
 Interval Activation::softplus(Interval x) {
-    long inf;
-    long sup;
+    Real inf(x.inf());
+    Real sup(x.sup());
 
-	mpfr_exp(inf, x.inf, MPFR_RNDD);
-    mpfr_add(inf, 1L, inf, MPFR_RNDD);
-    inf = mpfr_log(inf, inf, MPFR_RNDD);
+	inf.exp_assign();
+    inf.log_assign(1 + inf);
 
-	mpfr_exp(sup, x.sup, MPFR_RNDU);
-	mpfr_add(inf, 1L, sup, MPFR_RNDU);
-    sup = mpfr_log(sup, sup, MPFR_RNDU);
+	sup.exp_assign();
+    sup.log_assign(1 + inf);
 
-	Interval result(inf, sup);
+	Interval result(*inf, *sup);
     return result;
 }
 
 Interval Activation::softplus_de(Interval x) {
-    long inf;
-    long sup;
+    Real inf(x.inf());
+    Real sup(x.sup());
 
-    mpfr_mul_si(inf, x.inf, -1L, MPFR_RNDD);
-	mpfr_exp(inf, inf, MPFR_RNDD);
-	mpfr_add(inf, 1L, inf, MPFR_RNDD);
-    mpfr_div_d(inf, 1L, inf, MPFR_RNDD);
+    inf = - inf;
+    inf.exp_assign();
+    inf = 1/(1 + inf);
 
-	mpfr_exp(sup, x.sup, MPFR_RNDU);
-	mpfr_exp(sup, sup, MPFR_RNDU);
-	mpfr_add(sup, 1L, sup, MPFR_RNDU);
-    mpfr_div_d(sup, 1L, sup, MPFR_RNDU);
+	sup = - sup;
+    sup.exp_assign();
+    sup = 1/(1 + sup);
 
 	Interval result(inf, sup);
     return result;
 }
 
 Interval Activation::softplus_de2(Interval x) {
-    long inf;
-    long sup;
+    Real inf(x.inf());
+    Real sup(x.sup());
 
-    if x.inf
+
+    if (x.inf <= 0) && (x.sup >= 0) {
+
+    }
 
 }
 
