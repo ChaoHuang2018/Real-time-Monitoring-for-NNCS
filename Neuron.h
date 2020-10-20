@@ -47,5 +47,5 @@ public:
     void set_second_order_der_value(vector<Neuron> last_layer_info, Matrix<Interval> weight);
     void set_second_order_der_range(vector<Neuron> last_layer_info, Matrix<Interval> weight);
 
-    void set_activation_info(string activation_type);
+    void set_activation_info(string activation_type, string approach = "taylor");
 }
