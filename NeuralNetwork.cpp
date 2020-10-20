@@ -2,6 +2,19 @@
 #include <iostream>
 #include "NeuralNetwork.h"
 
+Layer::Layer()
+{
+}
+
+Layer::Layer(int last_layer_dim, int dim, string act, Matrix<Interval> w, Matrix<Interval> b)
+{
+    neuron_number_last_layer = last_layer_dim;
+    neuron_number_this_layer = dim;
+    activation = act;
+    weight = w;
+    bias = b;
+}
+
 NeuralNetwork::NeuralNetwork()
 {
 }
@@ -31,6 +44,8 @@ NeuralNetwork::NeuralNetwork(string filename, string act)
 
     // a question here. need to confirm on 10/20/2020 afternoon.
     // compute parameters of the input layer
+    double value;
+    Interval I(0.0, 0.0);
     Matrix<Interval> weight0(network_structure[0], num_of_inputs);
     Matrix<Interval> bias0(network_structure[0], 1);
     for (int i = 0; i < network_structure[0]; i++)
@@ -38,13 +53,13 @@ NeuralNetwork::NeuralNetwork(string filename, string act)
         for (int j = 0; j < num_of_inputs; j++)
         {
             getline(input, line);
-            double value = stod(line);
-            Interval I(value, value);
+            value = stod(line);
+            I.set(value, value);
             weight0[i][j] = I;
         }
         getline(input, line);
-        double value = stod(line);
-        Interval I(value, value);
+        value = stod(line);
+        I.set(value);
         bias0[i][0] = I;
     }
     Layer input_layer(num_of_inputs, network_structure[0], act, weight0, bias0);
@@ -61,13 +76,13 @@ NeuralNetwork::NeuralNetwork(string filename, string act)
             for (int j = 0; j < network_structure[layer_idx]; j++)
             {
                 getline(input, line);
-                double value = stod(line);
-                Interval I(value, value);
+                value = stod(line);
+                I.set(value);
                 weight0[i][j] = I;
             }
             getline(input, line);
-            double value = stod(line);
-            Interval I(value, value);
+            value = stod(line);
+            I.set(value);
             bias0[i][0] = I;
         }
         Layer hidden_layer(network_structure[layer_idx], network_structure[layer_idx + 1], act, weight, bias);
@@ -75,24 +90,11 @@ NeuralNetwork::NeuralNetwork(string filename, string act)
     }
     // Affine mapping of the output
     getline(input, line);
-    double value = stod(line);
-    Interval I(value, value);
+    value = stod(line);
+    I.set(value);
     offset = I;
     getline(input, line);
-    double value = stod(line);
-    Interval I(value, value);
+    value = stod(line);
+    I.set(value);
     scale_factor = I;
-}
-
-Layer::Layer()
-{
-}
-
-Layer::Layer(int last_layer_dim, int dim, string act, Matrix<Interval> w, Matrix<Interval> b)
-{
-    neuron_number_last_layer = last_layer_dim;
-    neuron_number_this_layer = dim;
-    activation = act;
-    weight = w;
-    bias = b;
 }

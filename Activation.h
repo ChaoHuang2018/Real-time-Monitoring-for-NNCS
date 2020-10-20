@@ -60,4 +60,4 @@ public:
     static Interval affine(Interval x);
     static Interval affine_de(Interval x);
     static Interval affine_de2(Interval x);
-}
+};

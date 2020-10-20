@@ -3,6 +3,48 @@
 using namespace flowstar;
 using namespace std;
 
+class Layer
+{
+protected:
+    // hidden layer and output layer (input layer excluded)
+    int neuron_number_last_layer;
+    int neuron_number_this_layer;
+    // activation of this layer: can be 'ReLU' or 'tanh' or 'sigmoid'
+    string activation;
+    // even though weight and bias are real matrix, we use interval to describe the access of each matrix for convenience
+    Matrix<Interval> weight;
+    Matrix<Interval> bias;
+
+public:
+    Layer();
+    Layer(int last_layer_dim, int dim, string act, Matrix<Interval> w, Matrix<Interval> b);
+
+    int get_neuron_number_last_layer()
+    {
+        return this->neuron_number_last_layer;
+    }
+
+    int get_neuron_number_this_layer()
+    {
+        return this->neuron_number_this_layer;
+    }
+
+    string get_activation()
+    {
+        return this->activation;
+    }
+
+    Matrix<Interval> get_weight()
+    {
+        return this->weight;
+    }
+
+    Matrix<Interval> get_bias()
+    {
+        return this->bias;
+    }
+};
+
 // Parse neural network and layer from a text file as classes
 // Please provide the get and set function for each member in the two classes.
 
@@ -54,47 +96,5 @@ public:
     vector<Layer> get_layers()
     {
         return this->layers;
-    }
-};
-
-class Layer
-{
-protected:
-    // hidden layer and output layer (input layer excluded)
-    int neuron_number_last_layer;
-    int neuron_number_this_layer;
-    // activation of this layer: can be 'ReLU' or 'tanh' or 'sigmoid'
-    string activation;
-    // even though weight and bias are real matrix, we use interval to describe the access of each matrix for convenience
-    Matrix<Interval> weight;
-    Matrix<Interval> bias;
-
-public:
-    Layer();
-    Layer(int last_layer_dim, int dim, string act, Matrix<Interval> w, Matrix<Interval> b);
-
-    int get_neuron_number_last_layer()
-    {
-        return this->neuron_number_last_layer;
-    }
-
-    int get_neuron_number_this_layer()
-    {
-        return this->neuron_number_this_layer;
-    }
-
-    string get_activation()
-    {
-        return this->activation;
-    }
-
-    Matrix<Interval> get_weight()
-    {
-        return this->weight;
-    }
-
-    Matrix<Interval> get_bias()
-    {
-        return this->bias;
     }
 };

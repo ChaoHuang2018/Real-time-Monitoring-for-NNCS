@@ -4,10 +4,14 @@ LIB_HOME = ../flowstar-template
 LIBS = -lflowstar -lmpfr -lgmp -lgsl -lgslcblas -lm -lglpk
 CFLAGS = -I . -I $(HOME) -g -O3 -std=c++11
 LINK_FLAGS = -g -L$(LIB_HOME) -L/usr/local/lib
+OBJS = NeuralNetwork.o Activation.o Neuron.o domain_computation.o
 
-all: LTI_example
+all: runtime test
 
-LTI_example: LTI_example.o
+runtime: $(OBJS)
+	g++-8 -O3 -w $(LINK_FLAGS) -o $@ $^ $(LIBS)
+
+test: test_new_implementation.o
 	g++-8 -O3 -w $(LINK_FLAGS) -o $@ $^ $(LIBS)
 
 %.o: %.cc
@@ -18,6 +22,6 @@ LTI_example: LTI_example.o
 	$(CXX) -O3 -c $(CFLAGS) -o $@ $<
 
 
-clean: 
-	rm -f *.o LTI_example
+clean:
+	rm -f *.o
 
