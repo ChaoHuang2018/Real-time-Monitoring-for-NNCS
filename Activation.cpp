@@ -7,7 +7,7 @@ Activation::Activation()
 {
 }
 
-Activation::Activation(string act, Interval in, Interval in_bound, string approach = "taylor")
+Activation::Activation(string act, Interval in, Interval in_bound, string approach)
 {
     string activation = act;
     Interval input = in;

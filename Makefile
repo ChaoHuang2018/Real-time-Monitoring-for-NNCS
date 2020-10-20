@@ -1,10 +1,10 @@
 CXX = g++-8
 HOME= /usr/local/include
-LIB_HOME = ../flowstar-template
+LIB_HOME = flowstar-template
 LIBS = -lflowstar -lmpfr -lgmp -lgsl -lgslcblas -lm -lglpk
 CFLAGS = -I . -I $(HOME) -g -O3 -std=c++11
 LINK_FLAGS = -g -L$(LIB_HOME) -L/usr/local/lib
-OBJS = NeuralNetwork.o Activation.o Neuron.o domain_computation.o
+OBJS = NeuralNetwork.o Activation.o Neuron.o NNTaylor.o domain_computation.o
 
 all: runtime test
 

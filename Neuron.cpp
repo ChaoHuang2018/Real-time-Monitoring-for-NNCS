@@ -1,5 +1,4 @@
 #include "flowstar-template/Continuous.h"
-#include "Activation.h"
 #include "Neuron.h"
 
 using namespace flowstar;
@@ -112,7 +111,7 @@ void Neuron::set_first_order_der_value(vector<Neuron> last_layer_info, Matrix<In
         Interval first_order_der_value_i(0);
         for (int j = 0; j < last_layer_info.size(); j++)
         {
-            first_order_der_value_i = first_order_der_value_i + (weight[j][0] * last_layer_info[j].activation_info.get_de()) * *(last_layer_info[j].get_first_order_der_value()[i]);
+            first_order_der_value_i = first_order_der_value_i + (weight[j][0] * last_layer_info[j].activation_info.get_de()) * last_layer_info[j].get_first_order_der_value()[i][0];
         }
         first_order_der_value[i][0] = first_order_der_value_i;
     }
@@ -127,7 +126,7 @@ void Neuron::set_first_order_der_range(vector<Neuron> last_layer_info, Matrix<In
         Interval first_order_der_range_i(0);
         for (int j = 0; j < last_layer_info.size(); j++)
         {
-            first_order_der_range_i = first_order_der_range_i + (weight[j][0] * last_layer_info[j].activation_info.get_de()) * *(last_layer_info[j].get_first_order_der_range()[i]);
+            first_order_der_range_i = first_order_der_range_i + (weight[j][0] * last_layer_info[j].activation_info.get_de()) * last_layer_info[j].get_first_order_der_range()[i][0];
         }
         first_order_der_range[i][0] = first_order_der_range_i;
     }
@@ -144,7 +143,7 @@ void Neuron::set_second_order_der_value(vector<Neuron> last_layer_info, Matrix<I
             Interval second_order_der_value_is(0);
             for (int j = 0; j < last_layer_info.size(); j++)
             {
-                second_order_der_value_is = second_order_der_value_is + weight[j][0] * (last_layer_info[j].activation_info.get_de2() * *(last_layer_info[j].get_first_order_der_value()[i]) * *(last_layer_info[j].get_first_order_der_value()[s]) + last_layer_info[j].get_activation_info().get_de() * *(last_layer_info[j].get_second_order_der_value()[i][s]));
+                second_order_der_value_is = second_order_der_value_is + weight[j][0] * (last_layer_info[j].activation_info.get_de2() * *(last_layer_info[j].get_first_order_der_value()[i]) * *(last_layer_info[j].get_first_order_der_value()[s]) + last_layer_info[j].get_activation_info().get_de() * (last_layer_info[j].get_second_order_der_value()[i][s]));
             }
             second_order_der_value[i][s] = second_order_der_value_is;
             second_order_der_value[s][i] = second_order_der_value_is;
@@ -163,7 +162,7 @@ void Neuron::set_second_order_der_range(vector<Neuron> last_layer_info, Matrix<I
             Interval second_order_der_range_is(0);
             for (int j = 0; j < last_layer_info.size(); j++)
             {
-                second_order_der_range_is = second_order_der_range_is + weight[j][0] * (last_layer_info[j].activation_info.get_de2_range() * *(last_layer_info[j].get_first_order_der_range()[i]) * *(last_layer_info[j].get_first_order_der_range()[s]) + last_layer_info[j].get_activation_info().get_de_range() * *(last_layer_info[j].get_second_order_der_range()[i][s]));
+                second_order_der_range_is = second_order_der_range_is + weight[j][0] * (last_layer_info[j].activation_info.get_de2_range() * *(last_layer_info[j].get_first_order_der_range()[i]) * *(last_layer_info[j].get_first_order_der_range()[s]) + last_layer_info[j].get_activation_info().get_de_range() * (last_layer_info[j].get_second_order_der_range()[i][s]));
             }
             second_order_der_range[i][s] = second_order_der_range_is;
             second_order_der_range[s][i] = second_order_der_range_is;
@@ -172,7 +171,7 @@ void Neuron::set_second_order_der_range(vector<Neuron> last_layer_info, Matrix<I
     this->second_order_der_range = second_order_der_range;
 }
 
-void Neuron::set_activation_info(string activation_type, string approach = "taylor")
+void Neuron::set_activation_info(string activation_type, string approach)
 {
     this->activation_info = Activation(activation_type, this->input_value, this->input_range, approach);
 }

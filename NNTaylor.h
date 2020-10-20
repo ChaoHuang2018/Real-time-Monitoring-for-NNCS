@@ -1,5 +1,4 @@
 #include "flowstar-template/Continuous.h"
-#include "Activation.h"
 #include "Neuron.h"
 #include "NeuralNetwork.h"
 

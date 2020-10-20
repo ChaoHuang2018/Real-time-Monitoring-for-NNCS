@@ -1,7 +1,3 @@
-#include "flowstar-template/Continuous.h"
-#include "Activation.h"
-#include "Neuron.h"
-#include "NeuralNetwork.h"
 #include "NNTaylor.h"
 
 using namespace flowstar;
@@ -56,7 +52,7 @@ void NNTaylor::set_taylor_linear(vector<string> state_vars, vector<Interval> net
         neuron.set_first_order_der_range(first_order_der_range);
         neuron.set_second_order_der_value(second_order_der_value);
         neuron.set_second_order_der_range(second_order_der_range);
-        neuron.set_activation_info("Affine");
+        neuron.set_activation_info("Affine", "taylor");
 
         layer_info.push_back(neuron);
     }
@@ -87,7 +83,7 @@ void NNTaylor::set_taylor_linear(vector<string> state_vars, vector<Interval> net
             neuron.set_first_order_der_range(last_layer_info, weight_i);
             neuron.set_second_order_der_value(last_layer_info, weight_i);
             neuron.set_second_order_der_range(last_layer_info, weight_i);
-            neuron.set_activation_info(layer.get_activation());
+            neuron.set_activation_info(layer.get_activation(), "taylor");
             this_layer_info.push_back(neuron);
         }
 
@@ -109,7 +105,7 @@ void NNTaylor::set_taylor_linear(vector<string> state_vars, vector<Interval> net
     virtual_neruon.set_first_order_der_range(last_layer_info, virtual_weight);
     virtual_neruon.set_second_order_der_value(last_layer_info, virtual_weight);
     virtual_neruon.set_second_order_der_range(last_layer_info, virtual_weight);
-    virtual_neruon.set_activation_info("Affine");
+    virtual_neruon.set_activation_info("Affine", "taylor");
 
     Interval nn_output = virtual_neruon.get_input_value();
     cout << "output on center: " << nn_output.inf() << endl;
