@@ -215,12 +215,15 @@ void NNTaylor::set_range_by_IBP(vector<Interval> network_input_box)
 
 string NNTaylor::get_taylor_expression()
 {
+    return this->taylor_linear_expression;
 }
 
 Interval NNTaylor::get_taylor_remainder()
 {
+    return this->taylor_linear_remainder;
 }
 
 Interval NNTaylor::get_range_by_IBP()
 {
+    return this->output_range_IBP;
 }

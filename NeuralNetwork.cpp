@@ -26,11 +26,20 @@ NeuralNetwork::NeuralNetwork(string filename, string act)
 
     // Parse the structure of neural networks
     getline(input, line);
-    num_of_inputs = stoi(line);
+    try
+    {
+        num_of_inputs = stoi(line);
+    }
+    catch (std::invalid_argument &e)
+    {
+        cout << "Problem during string/integer conversion!" << endl;
+    }
     getline(input, line);
     num_of_outputs = stoi(line);
     getline(input, line);
     num_of_hidden_layers = stoi(line);
+
+    cout << num_of_inputs << ", " << num_of_outputs << ", " << num_of_hidden_layers;
 
     std::vector<int> network_structure(num_of_hidden_layers + 1, 0);
     for (int idx = 0; idx < num_of_hidden_layers; idx++)
