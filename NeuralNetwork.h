@@ -20,6 +20,8 @@ class NeuralNetwork{
         // include hidden layers and output layer
         vector<Layer> layers;
 
+    public:
+        NeuralNetwork(string filename, string act);
 }
 
 class Layer{
@@ -32,4 +34,7 @@ class Layer{
         // even though weight and bias are real matrix, we use interval to describe the access of each matrix for convenience
         Matrix<Interval> weight(neuron_number_this_layer)(neuron_number_last_layer);
         Matrix<Interval> bias(neuron_number_this_layer)(1);
+
+    public:
+        create_layer(int last_layer_dim, int dim, string act, Matrix<Interval> w, Matrix<Interval> b);
 }
