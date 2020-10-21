@@ -144,6 +144,10 @@ void NNTaylor::set_taylor_linear(vector<string> state_vars, vector<Interval> net
         cout << jacobian_value[i][0].inf() << ", ";
     }
     cout << endl;
+    for (int i = 0; i < jacobian_value.rows(); i++)
+    {
+        this->jacobian.push_back(jacobian_value[i][0].inf());
+    }
 
     string expression = to_string(nn_output.inf());
     for (int i = 0; i < state_vars.size(); i++)
@@ -269,6 +273,11 @@ string NNTaylor::get_taylor_expression()
 Interval NNTaylor::get_taylor_remainder()
 {
     return this->taylor_linear_remainder;
+}
+
+vector<double> NNTaylor::get_jacobian()
+{
+    return this->jacobian;
 }
 
 Interval NNTaylor::get_range_by_IBP()

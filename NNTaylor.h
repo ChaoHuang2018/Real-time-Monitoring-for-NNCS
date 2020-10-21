@@ -11,6 +11,7 @@ protected:
     NeuralNetwork nn;
     string taylor_linear_expression;
     Interval taylor_linear_remainder;
+    vector<double> jacobian;
     Interval output_range_IBP;
 
 public:
@@ -22,6 +23,7 @@ public:
 
     string get_taylor_expression();
     Interval get_taylor_remainder();
+    vector<double> get_jacobian();
     Interval get_range_by_IBP();
 
     static double inf_norm(Matrix<double> m)

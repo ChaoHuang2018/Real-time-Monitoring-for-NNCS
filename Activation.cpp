@@ -166,7 +166,7 @@ Interval Activation::softplus(Interval x)
     Real inf(softplus(Real(x.inf())));
     Real sup(softplus(Real(x.sup())));
 
-    Interval result(inf.getValue_RNDD(), sup.getValue_RNDU());
+    Interval result(inf.toDouble(), sup.toDouble());
     return result;
 }
 
@@ -175,7 +175,7 @@ Interval Activation::softplus_de(Interval x)
     Real inf(softplus_de(Real(x.inf())));
     Real sup(softplus_de(Real(x.sup())));
 
-    Interval result(inf.getValue_RNDD(), sup.getValue_RNDU());
+    Interval result(inf.toDouble(), sup.toDouble());
     return result;
 }
 
@@ -204,7 +204,7 @@ Interval Activation::softplus_de2(Interval x)
         }
     }
 
-    Interval result(softplus_de2(inf).getValue_RNDD(), softplus_de2(sup).getValue_RNDU());
+    Interval result(softplus_de2(inf).toDouble(), softplus_de2(sup).toDouble());
     return result;
 }
 
@@ -248,7 +248,7 @@ Interval Activation::tanh(Interval x)
     Real inf(tanh(Real(x.inf())));
     Real sup(tanh(Real(x.sup())));
 
-    Interval result(inf.getValue_RNDD(), sup.getValue_RNDU());
+    Interval result(inf.toDouble(), sup.toDouble());
     return result;
 }
 
@@ -277,7 +277,7 @@ Interval Activation::tanh_de(Interval x)
         }
     }
 
-    Interval result(tanh_de(inf).getValue_RNDD(), tanh_de(sup).getValue_RNDU());
+    Interval result(tanh_de(inf).toDouble(), tanh_de(sup).toDouble());
     return result;
 }
 
@@ -312,7 +312,7 @@ Interval Activation::tanh_de2(Interval x)
         }
     }
 
-    Interval result(tanh_de(inf).getValue_RNDD(), tanh_de(sup).getValue_RNDU());
+    Interval result(tanh_de(inf).toDouble(), tanh_de(sup).toDouble());
     return result;
 }
 
