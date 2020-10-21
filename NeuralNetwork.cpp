@@ -107,12 +107,12 @@ NeuralNetwork::NeuralNetwork(string filename, string act)
     // Affine mapping of the output
     getline(input, line);
     value = stod(line);
-    cout << value << endl;
+    // cout << value << endl;
     I.set(value);
     offset = I;
     getline(input, line);
     value = stod(line);
-    cout << value << endl;
+    // cout << value << endl;
     I.set(value);
     scale_factor = I;
 }

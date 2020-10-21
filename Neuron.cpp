@@ -80,7 +80,7 @@ void Neuron::set_second_order_der_value(Matrix<Interval> second_order_der_value)
 
 void Neuron::set_second_order_der_range(Matrix<Interval> second_order_der_range)
 {
-    this->second_order_der_value = Matrix<Interval>(second_order_der_range);
+    this->second_order_der_range = Matrix<Interval>(second_order_der_range);
 }
 
 void Neuron::set_input_value(vector<Neuron> last_layer_info, Matrix<Interval> weight, Interval bias)
@@ -131,7 +131,7 @@ void Neuron::set_first_order_der_range(vector<Neuron> last_layer_info, Matrix<In
         Interval first_order_der_range_i(0);
         for (int j = 0; j < last_layer_info.size(); j++)
         {
-            first_order_der_range_i = first_order_der_range_i + (weight[0][j] * last_layer_info[j].activation_info.get_de()) * last_layer_info[j].get_first_order_der_range()[i][0];
+            first_order_der_range_i = first_order_der_range_i + (weight[0][j] * last_layer_info[j].activation_info.get_de_range()) * last_layer_info[j].get_first_order_der_range()[i][0];
         }
         first_order_der_range[i][0] = first_order_der_range_i;
     }
@@ -167,6 +167,19 @@ void Neuron::set_second_order_der_range(vector<Neuron> last_layer_info, Matrix<I
             Interval second_order_der_range_is(0);
             for (int j = 0; j < last_layer_info.size(); j++)
             {
+                // cout << "111111" << endl;
+                // cout << weight[0][j] << endl;
+                // cout << "222222" << endl;
+                // cout << last_layer_info[j].activation_info.get_de2_range() << endl;
+                // cout << "333333" << endl;
+                // cout << *(last_layer_info[j].get_first_order_der_range()[i]) << endl;
+                // cout << "444444" << endl;
+                // cout << *(last_layer_info[j].get_first_order_der_range()[s]) << endl;
+                // cout << "555555" << endl;
+                // cout << last_layer_info[j].get_activation_info().get_de_range() << endl;
+                // cout << "666666" << endl;
+                // cout << (last_layer_info[j].get_second_order_der_range()[i][s]) << endl;
+                // cout << "777777" << endl;
                 second_order_der_range_is = second_order_der_range_is + weight[0][j] * (last_layer_info[j].activation_info.get_de2_range() * *(last_layer_info[j].get_first_order_der_range()[i]) * *(last_layer_info[j].get_first_order_der_range()[s]) + last_layer_info[j].get_activation_info().get_de_range() * (last_layer_info[j].get_second_order_der_range()[i][s]));
             }
             second_order_der_range[i][s] = second_order_der_range_is;

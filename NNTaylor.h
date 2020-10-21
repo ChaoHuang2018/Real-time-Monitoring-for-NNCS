@@ -30,7 +30,7 @@ public:
         for (int i = 0; i < m.rows(); i++)
         {
             double row_abs_sum = 0;
-            for (int j = 0; i < m.cols(); j++)
+            for (int j = 0; j < m.cols(); j++)
             {
                 row_abs_sum = row_abs_sum + abs(m[i][j]);
             }

@@ -50,6 +50,9 @@ public:
     static Real sigmoid(Real x);
     static Real sigmoid_de(Real x);
     static Real sigmoid_de2(Real x);
+    static double sigmoid(double x);
+    static double sigmoid_de(double x);
+    static double sigmoid_de2(double x);
     static Interval sigmoid(Interval x);
     static Interval sigmoid_de(Interval x);
     static Interval sigmoid_de2(Interval x);

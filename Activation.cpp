@@ -190,8 +190,8 @@ Interval Activation::softplus_de2(Interval x)
         check_list.push_back(Real(0));
     }
 
-    Real inf(10000);
-    Real sup(-10000);
+    Real inf = check_list[0];
+    Real sup = check_list[0];
     for (int i = 0; i < check_list.size(); i++)
     {
         if (softplus_de2(check_list[i]) <= softplus_de2(inf))
@@ -263,8 +263,8 @@ Interval Activation::tanh_de(Interval x)
         check_list.push_back(Real(0));
     }
 
-    Real inf(10000);
-    Real sup(-10000);
+    Real inf = check_list[0];
+    Real sup = check_list[0];
     for (int i = 0; i < check_list.size(); i++)
     {
         if (tanh_de(check_list[i]) <= tanh_de(inf))
@@ -298,8 +298,8 @@ Interval Activation::tanh_de2(Interval x)
         check_list.push_back(Real(const_temp));
     }
 
-    Real inf(10000);
-    Real sup(-10000);
+    Real inf = check_list[0];
+    Real sup = check_list[0];
     for (int i = 0; i < check_list.size(); i++)
     {
         if (tanh_de2(check_list[i]) <= tanh_de2(inf))
@@ -351,33 +351,95 @@ Real Activation::sigmoid_de2(Real x)
     return result;
 }
 
+double Activation::sigmoid(double x)
+{
+    double result = 1.0 - 1.0 / (1.0 + exp(x));
+
+    // cout << "after other operations" << result << endl;
+
+    return result;
+}
+
+double Activation::sigmoid_de(double x)
+{
+    double temp1 = sigmoid(x);
+
+    double result = temp1 * (1.0 - temp1);
+
+    return result;
+}
+
+double Activation::sigmoid_de2(double x)
+{
+    double temp1 = sigmoid(x);
+
+    double result = (2.0 * temp1 * temp1 * temp1 - 3.0 * temp1 * temp1 + temp1);
+
+    return result;
+}
+
 Interval Activation::sigmoid(Interval x)
 {
-    Real inf(sigmoid(Real(x.inf())));
-    Real sup(sigmoid(Real(x.sup())));
-    // cout << "inf: " << inf << endl;
-    // cout << "sup: " << sup << endl;
+    // use Real
+    // Real inf(sigmoid(Real(x.inf())));
+    // Real sup(sigmoid(Real(x.sup())));
+    // // cout << "inf: " << inf << endl;
+    // // cout << "sup: " << sup << endl;
 
-    // bug!
-    // Interval result(inf, sup);
-    Interval result(inf.getValue_RNDD(), sup.getValue_RNDU());
-    // cout << result << endl;
+    // // bug!
+    // // Interval result(inf, sup);
+    // Interval result(inf.getValue_RNDD(), sup.getValue_RNDU());
+    // // cout << result << endl;
+    // return result;
+
+    // use double
+    double inf = sigmoid(x.inf());
+    double sup = sigmoid(x.sup());
+    Interval result(inf, sup);
     return result;
 }
 
 Interval Activation::sigmoid_de(Interval x)
 {
-    vector<Real> check_list;
-    check_list.push_back(Real(x.inf()));
-    check_list.push_back(Real(x.sup()));
+    // use Real
+    // vector<Real> check_list;
+    // check_list.push_back(Real(x.inf()));
+    // check_list.push_back(Real(x.sup()));
+
+    // if ((x.inf() <= 0) && (x.sup() >= 0))
+    // {
+    //     check_list.push_back(Real(0));
+    // }
+
+    // Real inf(10000);
+    // Real sup(-10000);
+    // for (int i = 0; i < check_list.size(); i++)
+    // {
+    //     if (sigmoid_de(check_list[i]) <= sigmoid_de(inf))
+    //     {
+    //         inf = check_list[i];
+    //     }
+    //     if (sigmoid_de(check_list[i]) >= sigmoid_de(sup))
+    //     {
+    //         sup = check_list[i];
+    //     }
+    // }
+
+    // Interval result((sigmoid_de(inf).getValue_RNDD()), (sigmoid_de(sup)).getValue_RNDU());
+    // return result;
+
+    // use double
+    vector<double> check_list;
+    check_list.push_back(x.inf());
+    check_list.push_back(x.sup());
 
     if ((x.inf() <= 0) && (x.sup() >= 0))
     {
-        check_list.push_back(Real(0));
+        check_list.push_back(0);
     }
 
-    Real inf(10000);
-    Real sup(-10000);
+    double inf = check_list[0];
+    double sup = check_list[0];
     for (int i = 0; i < check_list.size(); i++)
     {
         if (sigmoid_de(check_list[i]) <= sigmoid_de(inf))
@@ -390,43 +452,79 @@ Interval Activation::sigmoid_de(Interval x)
         }
     }
 
-    Interval result((sigmoid_de(inf).getValue_RNDD()), (sigmoid_de(sup)).getValue_RNDU());
+    Interval result((sigmoid_de(inf)), (sigmoid_de(sup)));
     return result;
 }
 
 Interval Activation::sigmoid_de2(Interval x)
 {
-    vector<Real> check_list;
-    check_list.push_back(Real(x.inf()));
-    check_list.push_back(Real(x.sup()));
+
+    //use real
+    // vector<Real> check_list;
+    // check_list.push_back(Real(x.inf()));
+    // check_list.push_back(Real(x.sup()));
+
+    // double const_temp1 = log(2 - pow(3, 1 / 2.));
+    // double const_temp2 = log(2 + pow(3, 1 / 2.));
+
+    // if ((x.inf() <= const_temp1) && (x.sup() >= const_temp1))
+    // {
+    //     check_list.push_back(Real(const_temp1));
+    // }
+    // if ((x.inf() <= const_temp2) && (x.sup() >= const_temp2))
+    // {
+    //     check_list.push_back(Real(const_temp2));
+    // }
+
+    // Real inf(10000);
+    // Real sup(-10000);
+    // for (int i = 0; i < check_list.size(); i++)
+    // {
+    //     if (sigmoid_de2(check_list[i]) <= sigmoid_de2(inf))
+    //     {
+    //         inf = check_list[i];
+    //     }
+    //     if (sigmoid_de2(check_list[i]) >= sigmoid_de2(sup))
+    //     {
+    //         sup = check_list[i];
+    //     }
+    // }
+
+    // Interval result((sigmoid_de(inf).getValue_RNDD()), (sigmoid_de(sup)).getValue_RNDU());
+    // return result;
+
+    //use double
+    vector<double> check_list;
+    check_list.push_back(x.inf());
+    check_list.push_back(x.sup());
 
     double const_temp1 = log(2 - pow(3, 1 / 2.));
     double const_temp2 = log(2 + pow(3, 1 / 2.));
 
     if ((x.inf() <= const_temp1) && (x.sup() >= const_temp1))
     {
-        check_list.push_back(Real(const_temp1));
+        check_list.push_back(const_temp1);
     }
     if ((x.inf() <= const_temp2) && (x.sup() >= const_temp2))
     {
-        check_list.push_back(Real(const_temp2));
+        check_list.push_back(const_temp2);
     }
 
-    Real inf(10000);
-    Real sup(-10000);
+    double inf = check_list[0];
+    double sup = check_list[0];
     for (int i = 0; i < check_list.size(); i++)
     {
-        if (tanh_de2(check_list[i]) <= tanh_de2(inf))
+        if (sigmoid_de2(check_list[i]) <= sigmoid_de2(inf))
         {
             inf = check_list[i];
         }
-        if (tanh_de2(check_list[i]) >= tanh_de2(sup))
+        if (sigmoid_de2(check_list[i]) >= sigmoid_de2(sup))
         {
             sup = check_list[i];
         }
     }
 
-    Interval result((sigmoid_de(inf).getValue_RNDD()), (sigmoid_de(sup)).getValue_RNDU());
+    Interval result((sigmoid_de2(inf)), (sigmoid_de2(sup)));
     return result;
 }
 

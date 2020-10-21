@@ -22,12 +22,12 @@ int main()
 
 	clock_t begin, end;
 	begin = clock();
-	// nn_taylor.set_taylor_linear(state_vars, network_input_box);
-	nn_taylor.set_range_by_IBP(network_input_box);
+	nn_taylor.set_taylor_linear(state_vars, network_input_box);
+	// nn_taylor.set_range_by_IBP(network_input_box);
 	end = clock();
-	// cout << "Linear Taylor Expression: " << nn_taylor.get_taylor_expression() << endl;
-	// cout << "Linear Taylor Remainder: " << nn_taylor.get_taylor_remainder() << endl;
-	// cout << "Time for generating error: " << (double)(end - begin) / CLOCKS_PER_SEC << endl;
+	cout << "Linear Taylor Expression: " << nn_taylor.get_taylor_expression() << endl;
+	cout << "Linear Taylor Remainder: " << nn_taylor.get_taylor_remainder() << endl;
+	cout << "Time for generating error: " << (double)(end - begin) / CLOCKS_PER_SEC << endl;
 
 	return 0;
 }
