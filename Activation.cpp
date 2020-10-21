@@ -9,16 +9,10 @@ Activation::Activation()
 
 Activation::Activation(string act, Interval in, Interval in_bound, string approach)
 {
-    string activation = act;
-    Interval input = in;
-    Interval input_bound = in_bound;
+    activation = act;
+    input = in;
+    input_bound = in_bound;
 
-    Interval value = Interval();
-    Interval de = Interval();
-    Interval de2 = Interval();
-    Interval output_range = Interval();
-    Interval de_range = Interval();
-    Interval de2_range = Interval();
     if (activation == "softplus")
     {
         if (approach != "taylor")
@@ -40,8 +34,12 @@ Activation::Activation(string act, Interval in, Interval in_bound, string approa
     {
         if (approach != "taylor")
         {
+            // cout << "before sigmoid: " << input << endl;
             value = sigmoid(input);
+            // cout << "after sigmoid: " << value << endl;
+            // cout << "Activation output: " << value << endl;
             output_range = sigmoid(input_bound);
+            // cout << "Activation output range: " << output_range << endl;
         }
         else
         {
@@ -75,7 +73,9 @@ Activation::Activation(string act, Interval in, Interval in_bound, string approa
         if (approach != "taylor")
         {
             value = affine(input);
+            // cout << "Activation output: " << value << endl;
             output_range = affine(input_bound);
+            // cout << "Activation output range: " << output_range << endl;
         }
         else
         {
@@ -166,7 +166,7 @@ Interval Activation::softplus(Interval x)
     Real inf(softplus(Real(x.inf())));
     Real sup(softplus(Real(x.sup())));
 
-    Interval result(inf, sup);
+    Interval result(inf.getValue_RNDD(), sup.getValue_RNDU());
     return result;
 }
 
@@ -175,7 +175,7 @@ Interval Activation::softplus_de(Interval x)
     Real inf(softplus_de(Real(x.inf())));
     Real sup(softplus_de(Real(x.sup())));
 
-    Interval result(inf, sup);
+    Interval result(inf.getValue_RNDD(), sup.getValue_RNDU());
     return result;
 }
 
@@ -204,7 +204,7 @@ Interval Activation::softplus_de2(Interval x)
         }
     }
 
-    Interval result((softplus_de2(inf)), (softplus_de2(sup)));
+    Interval result(softplus_de2(inf).getValue_RNDD(), softplus_de2(sup).getValue_RNDU());
     return result;
 }
 
@@ -248,7 +248,7 @@ Interval Activation::tanh(Interval x)
     Real inf(tanh(Real(x.inf())));
     Real sup(tanh(Real(x.sup())));
 
-    Interval result(inf, sup);
+    Interval result(inf.getValue_RNDD(), sup.getValue_RNDU());
     return result;
 }
 
@@ -277,7 +277,7 @@ Interval Activation::tanh_de(Interval x)
         }
     }
 
-    Interval result((tanh_de(inf)), (tanh_de(sup)));
+    Interval result(tanh_de(inf).getValue_RNDD(), tanh_de(sup).getValue_RNDU());
     return result;
 }
 
@@ -312,17 +312,21 @@ Interval Activation::tanh_de2(Interval x)
         }
     }
 
-    Interval result((tanh_de(inf)), (tanh_de(sup)));
+    Interval result(tanh_de(inf).getValue_RNDD(), tanh_de(sup).getValue_RNDU());
     return result;
 }
 
 Real Activation::sigmoid(Real x)
 {
     Real temp1(x);
+    // cout << "before exp" << temp1 << endl;
     temp1.exp_assign();
+    // cout << "before exp" << temp1 << endl;
 
     Real result = Real();
     result = 1.0 - 1.0 / (1.0 + temp1);
+
+    // cout << "after other operations" << result << endl;
 
     return result;
 }
@@ -351,8 +355,13 @@ Interval Activation::sigmoid(Interval x)
 {
     Real inf(sigmoid(Real(x.inf())));
     Real sup(sigmoid(Real(x.sup())));
+    // cout << "inf: " << inf << endl;
+    // cout << "sup: " << sup << endl;
 
-    Interval result(inf, sup);
+    // bug!
+    // Interval result(inf, sup);
+    Interval result(inf.getValue_RNDD(), sup.getValue_RNDU());
+    // cout << result << endl;
     return result;
 }
 
@@ -381,7 +390,7 @@ Interval Activation::sigmoid_de(Interval x)
         }
     }
 
-    Interval result((sigmoid_de(inf)), (sigmoid_de(sup)));
+    Interval result((sigmoid_de(inf).getValue_RNDD()), (sigmoid_de(sup)).getValue_RNDU());
     return result;
 }
 
@@ -417,7 +426,7 @@ Interval Activation::sigmoid_de2(Interval x)
         }
     }
 
-    Interval result((tanh_de(inf)), (tanh_de(sup)));
+    Interval result((sigmoid_de(inf).getValue_RNDD()), (sigmoid_de(sup)).getValue_RNDU());
     return result;
 }
 

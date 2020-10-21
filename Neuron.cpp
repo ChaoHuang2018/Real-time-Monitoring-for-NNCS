@@ -88,7 +88,10 @@ void Neuron::set_input_value(vector<Neuron> last_layer_info, Matrix<Interval> we
     Interval input_value(bias);
     for (int j = 0; j < last_layer_info.size(); j++)
     {
-        input_value = input_value + weight[j][0] * last_layer_info[j].activation_info.get_value();
+        // cout << weight[0][j] << endl;
+        // cout << last_layer_info[j].activation_info.get_value() << endl;
+        input_value = input_value + weight[0][j] * last_layer_info[j].activation_info.get_value();
+        // cout << "iterative value: " << input_value << endl;
     }
     this->input_value = input_value;
 }
@@ -98,7 +101,9 @@ void Neuron::set_input_range(vector<Neuron> last_layer_info, Matrix<Interval> we
     Interval input_range(bias);
     for (int j = 0; j < last_layer_info.size(); j++)
     {
-        input_range = input_range + weight[j][0] * last_layer_info[j].activation_info.get_output_range();
+        // cout << weight[0][j] << endl;
+        input_range = input_range + weight[0][j] * last_layer_info[j].activation_info.get_output_range();
+        // cout << "iterative range: " << input_range << endl;
     }
     this->input_range = input_range;
 }
@@ -111,7 +116,7 @@ void Neuron::set_first_order_der_value(vector<Neuron> last_layer_info, Matrix<In
         Interval first_order_der_value_i(0);
         for (int j = 0; j < last_layer_info.size(); j++)
         {
-            first_order_der_value_i = first_order_der_value_i + (weight[j][0] * last_layer_info[j].activation_info.get_de()) * last_layer_info[j].get_first_order_der_value()[i][0];
+            first_order_der_value_i = first_order_der_value_i + (weight[0][j] * last_layer_info[j].activation_info.get_de()) * last_layer_info[j].get_first_order_der_value()[i][0];
         }
         first_order_der_value[i][0] = first_order_der_value_i;
     }
@@ -126,7 +131,7 @@ void Neuron::set_first_order_der_range(vector<Neuron> last_layer_info, Matrix<In
         Interval first_order_der_range_i(0);
         for (int j = 0; j < last_layer_info.size(); j++)
         {
-            first_order_der_range_i = first_order_der_range_i + (weight[j][0] * last_layer_info[j].activation_info.get_de()) * last_layer_info[j].get_first_order_der_range()[i][0];
+            first_order_der_range_i = first_order_der_range_i + (weight[0][j] * last_layer_info[j].activation_info.get_de()) * last_layer_info[j].get_first_order_der_range()[i][0];
         }
         first_order_der_range[i][0] = first_order_der_range_i;
     }
@@ -143,7 +148,7 @@ void Neuron::set_second_order_der_value(vector<Neuron> last_layer_info, Matrix<I
             Interval second_order_der_value_is(0);
             for (int j = 0; j < last_layer_info.size(); j++)
             {
-                second_order_der_value_is = second_order_der_value_is + weight[j][0] * (last_layer_info[j].activation_info.get_de2() * *(last_layer_info[j].get_first_order_der_value()[i]) * *(last_layer_info[j].get_first_order_der_value()[s]) + last_layer_info[j].get_activation_info().get_de() * (last_layer_info[j].get_second_order_der_value()[i][s]));
+                second_order_der_value_is = second_order_der_value_is + weight[0][j] * (last_layer_info[j].activation_info.get_de2() * *(last_layer_info[j].get_first_order_der_value()[i]) * *(last_layer_info[j].get_first_order_der_value()[s]) + last_layer_info[j].get_activation_info().get_de() * (last_layer_info[j].get_second_order_der_value()[i][s]));
             }
             second_order_der_value[i][s] = second_order_der_value_is;
             second_order_der_value[s][i] = second_order_der_value_is;
@@ -162,7 +167,7 @@ void Neuron::set_second_order_der_range(vector<Neuron> last_layer_info, Matrix<I
             Interval second_order_der_range_is(0);
             for (int j = 0; j < last_layer_info.size(); j++)
             {
-                second_order_der_range_is = second_order_der_range_is + weight[j][0] * (last_layer_info[j].activation_info.get_de2_range() * *(last_layer_info[j].get_first_order_der_range()[i]) * *(last_layer_info[j].get_first_order_der_range()[s]) + last_layer_info[j].get_activation_info().get_de_range() * (last_layer_info[j].get_second_order_der_range()[i][s]));
+                second_order_der_range_is = second_order_der_range_is + weight[0][j] * (last_layer_info[j].activation_info.get_de2_range() * *(last_layer_info[j].get_first_order_der_range()[i]) * *(last_layer_info[j].get_first_order_der_range()[s]) + last_layer_info[j].get_activation_info().get_de_range() * (last_layer_info[j].get_second_order_der_range()[i][s]));
             }
             second_order_der_range[i][s] = second_order_der_range_is;
             second_order_der_range[s][i] = second_order_der_range_is;

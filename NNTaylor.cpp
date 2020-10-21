@@ -47,7 +47,9 @@ void NNTaylor::set_taylor_linear(vector<string> state_vars, vector<Interval> net
 
         Neuron neuron(this->nn.get_num_of_inputs());
         neuron.set_input_value(Interval(center[i][0], center[i][0]));
+        cout << neuron.get_input_value() << endl;
         neuron.set_input_range(network_input_box[i]);
+        cout << neuron.get_input_range() << endl;
         neuron.set_first_order_der_value(first_order_der_value);
         neuron.set_first_order_der_range(first_order_der_range);
         neuron.set_second_order_der_value(second_order_der_value);
@@ -61,7 +63,7 @@ void NNTaylor::set_taylor_linear(vector<string> state_vars, vector<Interval> net
     // start to process hidden layers and output layer
     // may be incorrect since I did not define copy constructor
     vector<Neuron> last_layer_info = layer_info;
-    for (int s = 0; s < this->nn.get_num_of_inputs() + 1; s++)
+    for (int s = 0; s < this->nn.get_num_of_hidden_layers() + 1; s++)
     {
         vector<Neuron> this_layer_info;
         Layer layer = this->nn.get_layers()[s];
@@ -162,7 +164,9 @@ void NNTaylor::set_range_by_IBP(vector<Interval> network_input_box)
     {
         Neuron neuron(this->nn.get_num_of_inputs());
         neuron.set_input_value(Interval(center[i][0], center[i][0]));
+        cout << neuron.get_input_value() << endl;
         neuron.set_input_range(network_input_box[i]);
+        cout << neuron.get_input_range() << endl;
         neuron.set_activation_info("Affine", "IBP");
 
         layer_info.push_back(neuron);
@@ -172,24 +176,36 @@ void NNTaylor::set_range_by_IBP(vector<Interval> network_input_box)
     // start to process hidden layers and output layer
     // may be incorrect since I did not define copy constructor
     vector<Neuron> last_layer_info = layer_info;
-    for (int s = 0; s < this->nn.get_num_of_inputs() + 1; s++)
+    cout << "num_of_hidden_layers: " << this->nn.get_num_of_hidden_layers() << endl;
+    for (int s = 0; s < this->nn.get_num_of_hidden_layers() + 1; s++)
     {
+        cout << "s: " << s << endl;
+
         vector<Neuron> this_layer_info;
         Layer layer = this->nn.get_layers()[s];
         Matrix<Interval> weight = layer.get_weight();
         Matrix<Interval> bias = layer.get_bias();
 
+        cout << "this layer neuron number : " << layer.get_neuron_number_this_layer() << endl;
+
+        // cout << "Layer " << s << ", Weight: " << weight << endl;
+        // cout << "Layer " << s << ", Bias: " << bias << endl;
+
         for (int i = 0; i < layer.get_neuron_number_this_layer(); i++)
         {
-            Matrix<Interval> weight_i(layer.get_neuron_number_last_layer(), 1);
+            Matrix<Interval> weight_i(1, layer.get_neuron_number_last_layer());
             weight.getRowVec(weight_i, i);
+            // cout << "Layer " << s << ", Neuron " << i << ", weight: " << weight_i << endl;
             Matrix<Interval> bias_i_matrix(1, 1);
             bias.getRowVec(bias_i_matrix, i);
             Interval bias_i = bias_i_matrix[0][0];
+            // cout << "Layer " << s << ", Neuron " << i << ", bias: " << bias_i << endl;
 
             Neuron neuron(this->nn.get_num_of_inputs());
             neuron.set_input_value(last_layer_info, weight_i, bias_i);
+            cout << "Layer " << s << ", Neuron " << i << ", input value: " << neuron.get_input_value() << endl;
             neuron.set_input_range(last_layer_info, weight_i, bias_i);
+            cout << "Layer " << s << ", Neuron " << i << ", input range: " << neuron.get_input_range() << endl;
             neuron.set_activation_info(layer.get_activation(), "IBP");
             this_layer_info.push_back(neuron);
         }
@@ -211,6 +227,11 @@ void NNTaylor::set_range_by_IBP(vector<Interval> network_input_box)
     virtual_neruon.set_activation_info("Affine", "IBP");
 
     this->output_range_IBP = virtual_neruon.get_input_range();
+
+    Interval nn_output_value = virtual_neruon.get_input_value();
+    cout << "output on center: " << nn_output_value.inf() << endl;
+    Interval nn_output_range = virtual_neruon.get_input_value();
+    cout << "output range: " << nn_output_range.inf() << ", " << nn_output_range.sup() << endl;
 }
 
 string NNTaylor::get_taylor_expression()

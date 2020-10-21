@@ -25,7 +25,13 @@ NeuralNetwork::NeuralNetwork(string filename, string act)
     std::string line;
 
     // Parse the structure of neural networks
-    getline(input, line);
+    if (getline(input, line))
+    {
+    }
+    else
+    {
+        cout << "failed to read file" << endl;
+    }
     try
     {
         num_of_inputs = stoi(line);
@@ -33,13 +39,14 @@ NeuralNetwork::NeuralNetwork(string filename, string act)
     catch (std::invalid_argument &e)
     {
         cout << "Problem during string/integer conversion!" << endl;
+        cout << line << endl;
     }
     getline(input, line);
     num_of_outputs = stoi(line);
     getline(input, line);
     num_of_hidden_layers = stoi(line);
 
-    cout << num_of_inputs << ", " << num_of_outputs << ", " << num_of_hidden_layers;
+    // cout << num_of_inputs << ", " << num_of_outputs << ", " << num_of_hidden_layers;
 
     std::vector<int> network_structure(num_of_hidden_layers + 1, 0);
     for (int idx = 0; idx < num_of_hidden_layers; idx++)
@@ -87,12 +94,12 @@ NeuralNetwork::NeuralNetwork(string filename, string act)
                 getline(input, line);
                 value = stod(line);
                 I.set(value);
-                weight0[i][j] = I;
+                weight[i][j] = I;
             }
             getline(input, line);
             value = stod(line);
             I.set(value);
-            bias0[i][0] = I;
+            bias[i][0] = I;
         }
         Layer hidden_layer(network_structure[layer_idx], network_structure[layer_idx + 1], act, weight, bias);
         layers.push_back(hidden_layer);
