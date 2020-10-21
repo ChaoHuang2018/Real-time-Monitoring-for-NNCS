@@ -18,7 +18,7 @@ void remainder_linear_taylor_benchmark1(Matrix<Interval> &remainder, Matrix<Inte
 	remainder[1][0] = 0;
 }
 
-void dynamics_linear_taylor_benchmark1(Matrix<string> &dynamics, Matrix<Interval> &domain)
+void dynamics_linear_taylor_benchmark1(Matrix<string> &dynamics, Matrix<double> &coeff, Matrix<double> &const_term, Matrix<Interval> &domain)
 {
 	Matrix<double> center(2, 1);
 	for (int j = 0; j < 2; j++)
@@ -30,8 +30,16 @@ void dynamics_linear_taylor_benchmark1(Matrix<string> &dynamics, Matrix<Interval
 	vector<double> jacobian;
 	jacobian.push_back(-3 * pow(center[0][0], 2.0));
 	jacobian.push_back(1);
-	string ode1_linear = to_string(const_term_ode1) + " + (" + to_string(jacobian[0]) + ") * " + "x0" + " + (" + to_string(jacobian[1]) + ") * " + "x1";
 
+	coeff[0][0] = jacobian[0];
+	coeff[0][1] = jacobian[1];
+	coeff[1][0] = 0;
+	coeff[1][1] = 0;
+
+	const_term[0][0] = const_term_ode1;
+	const_term[1][0] = 0;
+
+	string ode1_linear = to_string(const_term_ode1) + " + (" + to_string(jacobian[0]) + ") * " + "x0" + " + (" + to_string(jacobian[1]) + ") * " + "x1";
 	string ode2_linear = "0";
 
 	dynamics[0][0] = ode1_linear;

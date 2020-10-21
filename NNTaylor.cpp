@@ -135,6 +135,7 @@ void NNTaylor::set_taylor_linear(vector<string> state_vars, vector<Interval> net
     virtual_neruon.set_activation_info("Affine", "taylor");
 
     Interval nn_output = virtual_neruon.get_input_value();
+    this->output = nn_output.inf();
     cout << "output on center: " << nn_output.inf() << endl;
     Matrix<Interval> jacobian_value = virtual_neruon.get_first_order_der_value();
     cout << "jocobian: " << jacobian_value << endl;
@@ -273,6 +274,11 @@ string NNTaylor::get_taylor_expression()
 Interval NNTaylor::get_taylor_remainder()
 {
     return this->taylor_linear_remainder;
+}
+
+double NNTaylor::get_output()
+{
+    return this->output;
 }
 
 vector<double> NNTaylor::get_jacobian()

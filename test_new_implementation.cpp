@@ -49,10 +49,12 @@ int main()
 
 	// get the linear taylor model and the corresponding remainder of the dynamics over the primary guess
 	Matrix<Interval> linearization_remainder(2, 1);
-	Matrix<string> dynamics(2, 1);
-	dynamics_linear_taylor_benchmark1(dynamics, domain);
+	Matrix<string> dynamics_string(2, 1);
+	Matrix<double> dynamics_coeff(2, 2);
+	Matrix<double> dynamics_const_term(2, 1);
+	dynamics_linear_taylor_benchmark1(dynamics_string, dynamics_coeff, dynamics_const_term, domain);
 	remainder_linear_taylor_benchmark1(linearization_remainder, domain);
-	cout << "linear taylor expansion of dynamics: " << dynamics[0][0] << ", " << dynamics[1][0] << endl;
+	cout << "linear taylor expansion of dynamics: " << dynamics_string[0][0] << ", " << dynamics_string[1][0] << endl;
 	cout << "linear taylor Remainder of dynamics: " << linearization_remainder << endl;
 
 	// get the linear taylor model and the corresponding remainder of the nn controller over the primary guess
@@ -61,9 +63,97 @@ int main()
 	network_input_box.push_back(domain[1][0]);
 	nn_taylor.set_taylor_linear(state_vars, network_input_box);
 	// nn_taylor.set_range_by_IBP(network_input_box);
-	end = clock();
 	cout << "Linear Taylor Expression of nn controller: " << nn_taylor.get_taylor_expression() << endl;
 	cout << "Linear Taylor Remainder of nn controller: " << nn_taylor.get_taylor_remainder() << endl;
+
+	Matrix<double> nn_coeff(2, 2);
+	Matrix<double> nn_const_term(2, 1);
+	nn_coeff[1][0] = nn_taylor.get_jacobian()[0];
+	nn_coeff[1][1] = nn_taylor.get_jacobian()[1];
+	nn_const_term[1][0] = nn_taylor.get_output();
+
+	// A is the coeff of linear term
+	Matrix<double> A = dynamics_coeff + nn_coeff;
+	// B is the coeff of constant term
+	Matrix<double> B = dynamics_const_term + nn_const_term;
+	// C is the remainder, including dynamics remainder, nn controller remainder, disturbace
+	Matrix<Interval> C(2, 1);
+	C[0][0] = linearization_remainder[0][0] + d[0][0];
+	C[1][0] = linearization_remainder[1][0] + nn_taylor.get_taylor_remainder() + d[1][0];
+
+	cout << "A: " << A << endl;
+	cout << "B: " << C + B << endl;
+	// cout << "C: " << C << endl;
+
+	// compute reachable set for LTI
+	// declare the number of variables
+	unsigned int numVars = 2;
+
+	int x0_id = stateVars.declareVar("x0");
+	int x1_id = stateVars.declareVar("x1");
+
+	// define the dynamics
+	Linear_Time_Invariant_Dynamics dynamics(A, B);
+
+	// set the reachability parameters
+	Computational_Setting setting;
+
+	// set the stepsize and the order
+	setting.setFixedStepsize(0.02, 4);
+
+	// set the time horizon
+	setting.setTime(5);
+
+	// set the cutoff threshold
+	setting.setCutoffThreshold(1e-8);
+
+	// print out the computation steps: Can be turned off using printOff()
+	setting.printOn();
+
+	// call this function when all of the parameters are defined
+	setting.prepare();
+
+	// define the initial set which is a box
+	Interval init_x0(x_current[0][0]), init_x1(x_current[0][1]);
+
+	vector<Interval> box(numVars);
+	box[x0_id] = init_x0;
+	box[x1_id] = init_x1;
+
+	Flowpipe initialSet(box);
+
+	// unsafe set
+	vector<Constraint> unsafeSet;
+	Constraint constraint("-x0 + 2.2"); // x0 >= 2.2, change the constraint to x0 >= 2.1 will produce UNKNOWN
+	unsafeSet.push_back(constraint);
+
+	/*
+	 * The structure of the class Result_of_Reachability is defined as below:
+	 * nonlinear_flowpipes: the list of computed flowpipes
+	 * tmv_flowpipes: translation of the flowpipes, they will be used for further analysis
+	 * fp_end_of_time: the flowpipe at the time T
+	 */
+	Result_of_Reachability result;
+
+	// run the reachability computation
+	dynamics.reach(result, setting, initialSet, unsafeSet);
+
+	switch (result.status)
+	{
+	case COMPLETED_SAFE:
+		printf("Safe\n");
+		break;
+	case COMPLETED_UNSAFE:
+		printf("Unsafe\n");
+		break;
+	case COMPLETED_UNKNOWN:
+		printf("Unknown\n");
+		break;
+	default: // never happen to linear systems
+		printf("Fail to compute flowpipes.\n");
+	}
+
+	end = clock();
 	cout << "Totoal computition time for one point: " << (double)(end - begin) / CLOCKS_PER_SEC << endl;
 
 	return 0;
