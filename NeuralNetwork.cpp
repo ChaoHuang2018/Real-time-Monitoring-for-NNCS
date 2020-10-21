@@ -54,7 +54,7 @@ NeuralNetwork::NeuralNetwork(string filename, string act)
         getline(input, line);
         network_structure[idx] = stoi(line);
     }
-    num_of_outputs = network_structure.back();
+    network_structure[network_structure.size() - 1] = num_of_outputs;
 
     // Parse the input text file and store weights and bias
 
@@ -107,10 +107,12 @@ NeuralNetwork::NeuralNetwork(string filename, string act)
     // Affine mapping of the output
     getline(input, line);
     value = stod(line);
+    cout << value << endl;
     I.set(value);
     offset = I;
     getline(input, line);
     value = stod(line);
+    cout << value << endl;
     I.set(value);
     scale_factor = I;
 }
