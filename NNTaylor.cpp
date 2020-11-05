@@ -39,7 +39,7 @@ void NNTaylor::set_taylor_linear(vector<string> state_vars, vector<Interval> net
         Matrix<Interval> first_order_der_range(this->nn.get_num_of_inputs(), 1);
         first_order_der_range[i][0] = Interval(1, 1);
 
-        Matrix<Interval> second_order_der_value(this->nn.get_num_of_inputs(), this->nn.get_num_of_inputs());
+        // Matrix<Interval> second_order_der_value(this->nn.get_num_of_inputs(), this->nn.get_num_of_inputs());
         // for (int p = 0; p < this->nn.get_num_of_inputs(); p++)
         // {
         //     for (int q = 0; q < this->nn.get_num_of_inputs(); q++)
@@ -65,7 +65,7 @@ void NNTaylor::set_taylor_linear(vector<string> state_vars, vector<Interval> net
         // cout << "Input layer, Neuron " << i << ", first order value: " << neuron.get_first_order_der_value() << endl;
         neuron.set_first_order_der_range(first_order_der_range);
         // cout << "Input layer, Neuron " << i << ", first order range: " << neuron.get_first_order_der_range() << endl;
-        neuron.set_second_order_der_value(second_order_der_value);
+        // neuron.set_second_order_der_value(second_order_der_value);
         neuron.set_second_order_der_range(second_order_der_range);
         // cout << "123: " << neuron.get_second_order_der_value() << endl;
         // cout << "456: " << neuron.get_second_order_der_range() << endl;
@@ -105,7 +105,7 @@ void NNTaylor::set_taylor_linear(vector<string> state_vars, vector<Interval> net
             // cout << "Layer " << s << ", Neuron " << i << ", first order value: " << neuron.get_first_order_der_value() << endl;
             neuron.set_first_order_der_range(last_layer_info, weight_i);
             // cout << "Layer " << s << ", Neuron " << i << ", first order range: " << neuron.get_first_order_der_range() << endl;
-            neuron.set_second_order_der_value(last_layer_info, weight_i);
+            // neuron.set_second_order_der_value(last_layer_info, weight_i);
             neuron.set_second_order_der_range(last_layer_info, weight_i);
             neuron.set_activation_info(layer.get_activation(), "taylor");
             // cout << "Layer " << s << ", Neuron " << i << ", first order value after activation: " << neuron.get_activation_info().get_de() << endl;
@@ -130,11 +130,11 @@ void NNTaylor::set_taylor_linear(vector<string> state_vars, vector<Interval> net
     virtual_neruon.set_input_range(last_layer_info, virtual_weight, virtual_bias);
     virtual_neruon.set_first_order_der_value(last_layer_info, virtual_weight);
     virtual_neruon.set_first_order_der_range(last_layer_info, virtual_weight);
-    virtual_neruon.set_second_order_der_value(last_layer_info, virtual_weight);
+    // virtual_neruon.set_second_order_der_value(last_layer_info, virtual_weight);
     virtual_neruon.set_second_order_der_range(last_layer_info, virtual_weight);
     virtual_neruon.set_activation_info("Affine", "taylor");
 
-    Interval nn_output = virtual_neruon.get_input_value();
+    Interval const nn_output = virtual_neruon.get_input_value();
     this->output = nn_output.inf();
     cout << "output on center: " << nn_output.inf() << endl;
     Matrix<Interval> jacobian_value = virtual_neruon.get_first_order_der_value();
@@ -260,7 +260,7 @@ void NNTaylor::set_range_by_IBP(vector<Interval> network_input_box)
 
     this->output_range_IBP = virtual_neruon.get_input_range();
 
-    Interval nn_output_value = virtual_neruon.get_input_value();
+    Interval const nn_output_value = virtual_neruon.get_input_value();
     cout << "output on center: " << nn_output_value.inf() << endl;
     Interval nn_output_range = virtual_neruon.get_input_range();
     cout << "output range: " << nn_output_range << endl;

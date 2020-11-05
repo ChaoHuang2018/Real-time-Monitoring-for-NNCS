@@ -7,7 +7,7 @@ class Activation
 {
 
     //
-protected:
+public:
     string activation;
     Interval input;
     Interval input_bound;
@@ -36,16 +36,28 @@ public:
     static Real softplus(Real x);
     static Real softplus_de(Real x);
     static Real softplus_de2(Real x);
+    static double softplus(double x);
+    static double softplus_de(double x);
+    static double softplus_de2(double x);
     static Interval softplus(Interval x);
     static Interval softplus_de(Interval x);
     static Interval softplus_de2(Interval x);
+    void softplus(Interval &x_assign, Interval &x);
+    void softplus_de(Interval &x_assign, Interval &x);
+    void softplus_de2(Interval &x_assign, Interval &x);
 
     static Real tanh(Real x);
     static Real tanh_de(Real x);
     static Real tanh_de2(Real x);
+    static double tanh(double x);
+    static double tanh_de(double x);
+    static double tanh_de2(double x);
     static Interval tanh(Interval x);
     static Interval tanh_de(Interval x);
     static Interval tanh_de2(Interval x);
+    void tanh(Interval &x_assign, Interval &x);
+    void tanh_de(Interval &x_assign, Interval &x);
+    void tanh_de2(Interval &x_assign, Interval &x);
 
     static Real sigmoid(Real x);
     static Real sigmoid_de(Real x);
@@ -56,11 +68,20 @@ public:
     static Interval sigmoid(Interval x);
     static Interval sigmoid_de(Interval x);
     static Interval sigmoid_de2(Interval x);
+    void sigmoid(Interval &x_assign, Interval &x);
+    void sigmoid_de(Interval &x_assign, Interval &x);
+    void sigmoid_de2(Interval &x_assign, Interval &x);
 
     static Real affine(Real x);
     static Real affine_de(Real x);
     static Real affine_de2(Real x);
+    static double affine(double x);
+    static double affine_de(double x);
+    static double affine_de2(double x);
     static Interval affine(Interval x);
     static Interval affine_de(Interval x);
     static Interval affine_de2(Interval x);
+    void affine(Interval &x_assign, Interval &x);
+    void affine_de(Interval &x_assign, Interval &x);
+    void affine_de2(Interval &x_assign, Interval &x);
 };

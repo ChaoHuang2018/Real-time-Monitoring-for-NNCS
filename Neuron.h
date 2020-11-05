@@ -6,7 +6,7 @@ using namespace std;
 
 class Neuron
 {
-protected:
+public:
     int nn_input_dim;
     Activation activation_info;
     Interval input_value;
@@ -22,7 +22,7 @@ public:
 
     int get_nn_input_dim();
     Activation get_activation_info();
-    Interval get_input_value();
+    const Interval &get_input_value() const;
     Interval get_input_range();
     Matrix<Interval> get_first_order_der_value();
     Matrix<Interval> get_first_order_der_range();

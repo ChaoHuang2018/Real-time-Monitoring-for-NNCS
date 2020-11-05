@@ -25,9 +25,12 @@ Activation::Activation(string act, Interval in, Interval in_bound, string approa
             value = softplus(input);
             de = softplus_de(input);
             de2 = softplus_de2(input);
-            output_range = softplus(input_bound);
-            de_range = softplus_de(input_bound);
-            de2_range = softplus_de2(input_bound);
+            // output_range = softplus(input_bound);
+            // de_range = softplus_de(input_bound);
+            // de2_range = softplus_de2(input_bound);
+            softplus(this->output_range, input_bound);
+            softplus_de(this->de_range, input_bound);
+            softplus_de2(this->de2_range, input_bound);
         }
     }
     if (activation == "sigmoid")
@@ -46,9 +49,12 @@ Activation::Activation(string act, Interval in, Interval in_bound, string approa
             value = sigmoid(input);
             de = sigmoid_de(input);
             de2 = sigmoid_de2(input);
-            output_range = sigmoid(input_bound);
-            de_range = sigmoid_de(input_bound);
-            de2_range = sigmoid_de2(input_bound);
+            // output_range = sigmoid(input_bound);
+            // de_range = sigmoid_de(input_bound);
+            // de2_range = sigmoid_de2(input_bound);
+            sigmoid(this->output_range, input_bound);
+            sigmoid_de(this->de_range, input_bound);
+            sigmoid_de2(this->de2_range, input_bound);
         }
     }
     if (activation == "tanh")
@@ -63,9 +69,12 @@ Activation::Activation(string act, Interval in, Interval in_bound, string approa
             value = tanh(input);
             de = tanh_de(input);
             de2 = tanh_de2(input);
-            output_range = tanh(input_bound);
-            de_range = tanh_de(input_bound);
-            de2_range = tanh_de2(input_bound);
+            // output_range = tanh(input_bound);
+            // de_range = tanh_de(input_bound);
+            // de2_range = tanh_de2(input_bound);
+            tanh(this->output_range, input_bound);
+            tanh_de(this->de_range, input_bound);
+            tanh_de2(this->de2_range, input_bound);
         }
     }
     if (activation == "Affine")
@@ -82,9 +91,12 @@ Activation::Activation(string act, Interval in, Interval in_bound, string approa
             value = affine(input);
             de = affine_de(input);
             de2 = affine_de2(input);
-            output_range = affine(input_bound);
-            de_range = affine_de(input_bound);
-            de2_range = affine_de2(input_bound);
+            // output_range = affine(input_bound);
+            // de_range = affine_de(input_bound);
+            // de2_range = affine_de2(input_bound);
+            affine(this->output_range, input_bound);
+            affine_de(this->de_range, input_bound);
+            affine_de2(this->de2_range, input_bound);
         }
     }
 }
@@ -161,6 +173,24 @@ Real Activation::softplus_de2(Real x)
     return softplus_de(x) * (1 - softplus_de(x));
 }
 
+double Activation::softplus(double x)
+{
+    double result = log(1 + exp(x));
+    return result;
+}
+
+double Activation::softplus_de(double x)
+{
+    double result = 1 / (exp(-x) + 1);
+    return result;
+}
+
+double Activation::softplus_de2(double x)
+{
+    double result = softplus_de(x) * (1 - softplus_de(x));
+    return result;
+}
+
 Interval Activation::softplus(Interval x)
 {
     Real inf(softplus(Real(x.inf())));
@@ -208,6 +238,47 @@ Interval Activation::softplus_de2(Interval x)
     return result;
 }
 
+void Activation::softplus(Interval &x_assign, Interval &x)
+{
+    x_assign.setInf(softplus(x.inf()));
+    x_assign.setSup(softplus(x.sup()));
+}
+
+void Activation::softplus_de(Interval &x_assign, Interval &x)
+{
+    x_assign.setInf(softplus_de(x.inf()));
+    x_assign.setSup(softplus_de(x.sup()));
+}
+
+void Activation::softplus_de2(Interval &x_assign, Interval &x)
+{
+    vector<double> check_list;
+    check_list.push_back(x.inf());
+    check_list.push_back(x.sup());
+
+    if ((x.inf() <= 0) && (x.sup() >= 0))
+    {
+        check_list.push_back(0);
+    }
+
+    double inf = check_list[0];
+    double sup = check_list[0];
+    for (int i = 0; i < check_list.size(); i++)
+    {
+        if (softplus_de2(check_list[i]) <= softplus_de2(inf))
+        {
+            inf = check_list[i];
+        }
+        if (softplus_de2(check_list[i]) >= softplus_de2(sup))
+        {
+            sup = check_list[i];
+        }
+    }
+
+    x_assign.setInf(softplus_de(inf));
+    x_assign.setSup(softplus_de(sup));
+}
+
 Real Activation::tanh(Real x)
 {
     Real temp1(x);
@@ -236,11 +307,28 @@ Real Activation::tanh_de2(Real x)
     Real temp2(x);
     temp1 = tanh(temp1);
     temp2 = tanh(temp2);
-    temp1.pow_assign(2);
+    temp2.pow_assign(2);
 
-    Real result(-2 * temp1 * (1 - temp2));
+    Real result(-2.0 * temp1 * (1.0 - temp2));
 
     return result;
+}
+
+double Activation::tanh(double x)
+{
+    double result = (exp(x) - exp(-x)) / (exp(x) + exp(-x));
+    return result;
+}
+
+double Activation::tanh_de(double x)
+{
+    double result = 1.0 - pow(tanh(x), 2.0);
+    return result;
+}
+
+double Activation::tanh_de2(double x)
+{
+    double result = -2.0 * tanh(x) * (1.0 - pow(tanh(x), 2.0));
 }
 
 Interval Activation::tanh(Interval x)
@@ -314,6 +402,76 @@ Interval Activation::tanh_de2(Interval x)
 
     Interval result(tanh_de(inf).toDouble(), tanh_de(sup).toDouble());
     return result;
+}
+
+void Activation::tanh(Interval &x_assign, Interval &x)
+{
+    x_assign.setInf(tanh(x.inf()));
+    x_assign.setSup(tanh(x.sup()));
+}
+
+void Activation::tanh_de(Interval &x_assign, Interval &x)
+{
+    vector<double> check_list;
+    check_list.push_back(x.inf());
+    check_list.push_back(x.sup());
+
+    if ((x.inf() <= 0) && (x.sup() >= 0))
+    {
+        check_list.push_back(0);
+    }
+
+    double inf = check_list[0];
+    double sup = check_list[0];
+    for (int i = 0; i < check_list.size(); i++)
+    {
+        if (tanh_de(check_list[i]) <= tanh_de(inf))
+        {
+            inf = check_list[i];
+        }
+        if (tanh_de(check_list[i]) >= tanh_de(sup))
+        {
+            sup = check_list[i];
+        }
+    }
+
+    x_assign.setInf(tanh_de(inf));
+    x_assign.setSup(tanh_de(sup));
+}
+
+void Activation::tanh_de2(Interval &x_assign, Interval &x)
+{
+    vector<double> check_list;
+    check_list.push_back(x.inf());
+    check_list.push_back(x.sup());
+
+    double const_temp = pow(3, 1 / 3.) / 3.;
+
+    if ((x.inf() <= -const_temp) && (x.sup() >= -const_temp))
+    {
+        check_list.push_back(-const_temp);
+    }
+    if ((x.inf() <= const_temp) && (x.sup() >= const_temp))
+    {
+        check_list.push_back(const_temp);
+    }
+
+    double inf = check_list[0];
+    double sup = check_list[0];
+    for (int i = 0; i < check_list.size(); i++)
+    {
+        if (tanh_de2(check_list[i]) <= tanh_de2(inf))
+        {
+            inf = check_list[i];
+        }
+        if (tanh_de2(check_list[i]) >= tanh_de2(sup))
+        {
+            sup = check_list[i];
+        }
+    }
+
+    x_assign.setInf(tanh_de(inf));
+    x_assign.setSup(tanh_de(sup));
 }
 
 Real Activation::sigmoid(Real x)
@@ -528,6 +686,76 @@ Interval Activation::sigmoid_de2(Interval x)
     return result;
 }
 
+void Activation::sigmoid(Interval &x_assign, Interval &x)
+{
+    x_assign.setInf(sigmoid(x.inf()));
+    x_assign.setSup(sigmoid(x.sup()));
+}
+
+void Activation::sigmoid_de(Interval &x_assign, Interval &x)
+{
+    vector<double> check_list;
+    check_list.push_back(x.inf());
+    check_list.push_back(x.sup());
+
+    if ((x.inf() <= 0) && (x.sup() >= 0))
+    {
+        check_list.push_back(0);
+    }
+
+    double inf = check_list[0];
+    double sup = check_list[0];
+    for (int i = 0; i < check_list.size(); i++)
+    {
+        if (sigmoid_de(check_list[i]) <= sigmoid_de(inf))
+        {
+            inf = check_list[i];
+        }
+        if (sigmoid_de(check_list[i]) >= sigmoid_de(sup))
+        {
+            sup = check_list[i];
+        }
+    }
+
+    x_assign.setInf(sigmoid_de(inf));
+    x_assign.setSup(sigmoid_de(sup));
+}
+
+void Activation::sigmoid_de2(Interval &x_assign, Interval &x)
+{
+    vector<double> check_list;
+    check_list.push_back(x.inf());
+    check_list.push_back(x.sup());
+
+    double const_temp1 = log(2 - pow(3, 1 / 2.));
+    double const_temp2 = log(2 + pow(3, 1 / 2.));
+
+    if ((x.inf() <= const_temp1) && (x.sup() >= const_temp1))
+    {
+        check_list.push_back(const_temp1);
+    }
+    if ((x.inf() <= const_temp2) && (x.sup() >= const_temp2))
+    {
+        check_list.push_back(const_temp2);
+    }
+
+    double inf = check_list[0];
+    double sup = check_list[0];
+    for (int i = 0; i < check_list.size(); i++)
+    {
+        if (sigmoid_de2(check_list[i]) <= sigmoid_de2(inf))
+        {
+            inf = check_list[i];
+        }
+        if (sigmoid_de2(check_list[i]) >= sigmoid_de2(sup))
+        {
+            sup = check_list[i];
+        }
+    }
+    x_assign.setInf(sigmoid_de2(inf));
+    x_assign.setSup(sigmoid_de2(sup));
+}
+
 Real Activation::affine(Real x)
 {
     return Real(x);
@@ -543,6 +771,21 @@ Real Activation::affine_de2(Real x)
     return Real(0);
 }
 
+double Activation::affine(double x)
+{
+    return x;
+}
+
+double Activation::affine_de(double x)
+{
+    return 1.0;
+}
+
+double Activation::affine_de2(double x)
+{
+    return 0.0;
+}
+
 Interval Activation::affine(Interval x)
 {
     return Interval(x);
@@ -556,4 +799,22 @@ Interval Activation::affine_de(Interval x)
 Interval Activation::affine_de2(Interval x)
 {
     return Interval(0);
+}
+
+void Activation::affine(Interval &x_assign, Interval &x)
+{
+    x_assign.setInf(x.inf());
+    x_assign.setSup(x.sup());
+}
+
+void Activation::affine_de(Interval &x_assign, Interval &x)
+{
+    x_assign.setInf(1.0);
+    x_assign.setSup(1.0);
+}
+
+void Activation::affine_de2(Interval &x_assign, Interval &x)
+{
+    x_assign.setInf(0.0);
+    x_assign.setSup(0.0);
 }
