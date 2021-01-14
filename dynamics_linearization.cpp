@@ -39,6 +39,8 @@ void dynamics_linear_taylor_benchmark1(Matrix<string> &dynamics, Matrix<double> 
 	const_term[0][0] = const_term_ode1;
 	const_term[1][0] = 0;
 
+	// need to revise, forgot to consider the approximation error
+
 	string ode1_linear = to_string(const_term_ode1) + " + (" + to_string(jacobian[0]) + ") * " + "x0" + " + (" + to_string(jacobian[1]) + ") * " + "x1";
 	string ode2_linear = "0";
 
