@@ -136,13 +136,14 @@ void NNTaylor::set_taylor_linear(vector<string> state_vars, vector<Interval> net
 
     Interval const nn_output = virtual_neruon.get_input_value();
     this->output = nn_output.inf();
-    cout << "output on center: " << nn_output.inf() << endl;
+    // cout << "output on center: " << nn_output.inf() << endl;
     Matrix<Interval> jacobian_value = virtual_neruon.get_first_order_der_value();
-    cout << "jocobian: " << jacobian_value << endl;
-    cout << "output_der on center: ";
+    cout << "jocobian_range: " << virtual_neruon.get_first_order_der_range() << endl;
+    // cout << "jocobian: " << jacobian_value << endl;
+    // cout << "output_der on center: ";
     for (int i = 0; i < jacobian_value.rows(); i++)
     {
-        cout << jacobian_value[i][0].inf() << ", ";
+        // cout << jacobian_value[i][0].inf() << ", ";
     }
     cout << endl;
     for (int i = 0; i < jacobian_value.rows(); i++)
@@ -158,18 +159,25 @@ void NNTaylor::set_taylor_linear(vector<string> state_vars, vector<Interval> net
     this->taylor_linear_expression = expression;
 
     Matrix<Interval> hessian_range = virtual_neruon.get_second_order_der_range();
-    cout << "hessian_range: " << hessian_range << endl;
-    Matrix<double> hessian_max(this->nn.get_num_of_inputs(), this->nn.get_num_of_inputs());
-    for (int i = 0; i < hessian_max.rows(); i++)
-    {
-        for (int j = 0; j < hessian_max.cols(); j++)
-        {
-            hessian_max[i][j] = max(abs(hessian_range[i][j].inf()), abs(hessian_range[i][j].sup()));
-        }
-    }
-    cout << inf_norm(half_len) << endl;
-    double error = 0.5 * inf_norm(half_len) * inf_norm(hessian_max);
-    this->taylor_linear_remainder = Interval(-error, error);
+    // cout << "hessian_range: " << hessian_range << endl;
+    // Matrix<double> hessian_max(this->nn.get_num_of_inputs(), this->nn.get_num_of_inputs());
+    // for (int i = 0; i < hessian_max.rows(); i++)
+    // {
+    //     for (int j = 0; j < hessian_max.cols(); j++)
+    //     {
+    //         hessian_max[i][j] = max(abs(hessian_range[i][j].inf()), abs(hessian_range[i][j].sup()));
+    //     }
+    // }
+    // // cout << inf_norm(half_len) << endl;
+    // double error = 0.5 * inf_norm(half_len) * inf_norm(hessian_max);
+
+    // double error1 = remainder_norm_based(network_input_box, hessian_range);
+    double error2 = remainder_interval_arithmetic(network_input_box, hessian_range);
+    // cout << "error1: " << error1 << endl;
+    // cout << "error2: " << error2 << endl;
+
+    this->taylor_linear_remainder = Interval(-error2, error2);
+    // cout << "output range: " << virtual_neruon.get_input_range() << endl;
 }
 
 void NNTaylor::set_range_by_IBP(vector<Interval> network_input_box)
@@ -261,7 +269,7 @@ void NNTaylor::set_range_by_IBP(vector<Interval> network_input_box)
     this->output_range_IBP = virtual_neruon.get_input_range();
 
     Interval const nn_output_value = virtual_neruon.get_input_value();
-    cout << "output on center: " << nn_output_value.inf() << endl;
+    // cout << "output on center: " << nn_output_value.inf() << endl;
     Interval nn_output_range = virtual_neruon.get_input_range();
     cout << "output range: " << nn_output_range << endl;
 }
@@ -289,4 +297,55 @@ vector<double> NNTaylor::get_jacobian()
 Interval NNTaylor::get_range_by_IBP()
 {
     return this->output_range_IBP;
+}
+
+double remainder_interval_arithmetic(vector<Interval> network_input_box, Matrix<Interval> hessian_range)
+{
+    // Interval c(0.5, 0.5);
+    Matrix<double> center(network_input_box.size(), 1);
+    for (int j = 0; j < network_input_box.size(); j++)
+    {
+        center[j][0] = network_input_box[j].midpoint();
+    }
+
+    Matrix<Interval> input_box(network_input_box.size(), 1);
+    for (int j = 0; j < network_input_box.size(); j++)
+    {
+        input_box[j][0] = network_input_box[j];
+    }
+
+    Matrix<Interval> state_inter = input_box - center;
+
+    Matrix<Interval> state_inter_trans(1, network_input_box.size());
+    state_inter.transpose(state_inter_trans);
+
+    Matrix<Interval> remainder = state_inter_trans * hessian_range * state_inter * 0.5;
+    return remainder[0][0].sup();
+}
+
+double remainder_norm_based(vector<Interval> network_input_box, Matrix<Interval> hessian_range)
+{
+    Matrix<double> center(network_input_box.size(), 1);
+    for (int j = 0; j < network_input_box.size(); j++)
+    {
+        center[j][0] = network_input_box[j].midpoint();
+    }
+
+    Matrix<double> half_len(network_input_box.size(), 1);
+    for (int j = 0; j < network_input_box.size(); j++)
+    {
+        half_len[j][0] = network_input_box[j].width() / 2.0;
+    }
+
+    Matrix<double> hessian_max(network_input_box.size(), network_input_box.size());
+    for (int i = 0; i < hessian_max.rows(); i++)
+    {
+        for (int j = 0; j < hessian_max.cols(); j++)
+        {
+            hessian_max[i][j] = max(abs(hessian_range[i][j].inf()), abs(hessian_range[i][j].sup()));
+        }
+    }
+    // cout << inf_norm(half_len) << endl;
+    double error = 0.5 * NNTaylor::inf_norm(half_len) * NNTaylor::inf_norm(hessian_max);
+    return error;
 }

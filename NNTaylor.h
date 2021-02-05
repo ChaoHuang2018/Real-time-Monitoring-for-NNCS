@@ -46,3 +46,7 @@ public:
         return norm;
     }
 };
+
+double remainder_interval_arithmetic(vector<Interval> network_input_box, Matrix<Interval> hessian_range);
+
+double remainder_norm_based(vector<Interval> network_input_box, Matrix<Interval> hessian_range);

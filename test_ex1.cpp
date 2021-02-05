@@ -126,7 +126,7 @@ int main()
 	Computational_Setting setting;
 	unsigned int order = 4;
 	// stepsize and order for reachability analysis
-	setting.setFixedStepsize(0.02, order);
+	setting.setFixedStepsize(0.2, order);
 	// time horizon. NOT a single control step
 	setting.setTime(1.0);
 	// cutoff threshold

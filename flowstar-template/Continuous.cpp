@@ -4488,12 +4488,12 @@ int Linear_Time_Invariant_Dynamics::reach_LTI(std::list<LinearFlowpipe> & flowpi
 
 	interval_utm_setting.setOrder(tm_setting.order);
 
-
+/*
 	flowpipes.clear();
 	flowpipes_safety.clear();
 
 	num_of_flowpipes = 1;
-
+*/
 
 	// perform the safety checking on the first flowpipe
 	int checking_result = COMPLETED_SAFE;
@@ -4562,7 +4562,8 @@ int Linear_Time_Invariant_Dynamics::reach_LTI(std::list<LinearFlowpipe> & flowpi
 
 
 	Matrix<UnivariateTaylorModel<Real> > utm_global_Psi = utm_Psi;
-	Matrix<Real> rm_global_Phi(rangeDim);
+	Matrix<Real> rm_global_Phi = rm_Phi;
+//	Matrix<Real> rm_global_Phi(rangeDim);
 
 	int N = (int)ceil(time/step);
 

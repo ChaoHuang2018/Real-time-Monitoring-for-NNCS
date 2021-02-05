@@ -1,18 +1,18 @@
 CXX = g++-8
 HOME= /usr/local/include
 NN_HOME = ./
-LIB_HOME = flowstar-template
+LIB_HOME = ./flowstar-template
 LIBS = -lflowstar -lmpfr -lgmp -lgsl -lgslcblas -lm -lglpk
 CFLAGS = -I . -I $(HOME) -g -O3 -std=c++11
 LINK_FLAGS = -g -L$(LIB_HOME) -L/usr/local/lib -L$(NN_HOME)
-OBJS = NeuralNetwork.o Activation.o Neuron.o NNTaylor.o domain_computation.o dynamics_linearization.o LTI_Abstraction.o
+OBJS = NeuralNetwork.o Activation.o Neuron.o NNTaylor.o domain_computation.o dynamics_linearization.o LTI_Abstraction.o Trajectories.o Result_Info.o test_nn_taylor_approx.o
 
 all: test
 
 runtime: $(OBJS)
 	g++-8 -O3 -w $(LINK_FLAGS) $^ $(LIBS)
 
-test: test_ex1.o $(OBJS)
+test: test_nn_taylor_approx.o $(OBJS)
 	g++-8 -O3 -w $(LINK_FLAGS) -o $@ $^ $(LIBS)
 
 %.o: %.cc

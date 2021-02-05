@@ -288,6 +288,8 @@ Real Activation::tanh(Real x)
 
     Real result((temp1 - temp2) / (temp1 + temp2));
 
+    //cout << "tanh111111111" << endl;
+
     return result;
 }
 
@@ -298,6 +300,7 @@ Real Activation::tanh_de(Real x)
     temp1.pow_assign(2);
 
     Real result(1 - temp1);
+    //cout << "tanh22222222222" << endl;
     return result;
 }
 
@@ -310,6 +313,7 @@ Real Activation::tanh_de2(Real x)
     temp2.pow_assign(2);
 
     Real result(-2.0 * temp1 * (1.0 - temp2));
+    //cout << "tanh33333" << endl;
 
     return result;
 }
@@ -317,18 +321,22 @@ Real Activation::tanh_de2(Real x)
 double Activation::tanh(double x)
 {
     double result = (exp(x) - exp(-x)) / (exp(x) + exp(-x));
+    //cout << "tanh444444444" << endl;
     return result;
 }
 
 double Activation::tanh_de(double x)
 {
     double result = 1.0 - pow(tanh(x), 2.0);
+    //cout << "tanh5555555555" << endl;
     return result;
 }
 
 double Activation::tanh_de2(double x)
 {
     double result = -2.0 * tanh(x) * (1.0 - pow(tanh(x), 2.0));
+    //cout << "tanh111111111" << endl;
+    return result;
 }
 
 Interval Activation::tanh(Interval x)
