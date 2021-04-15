@@ -189,6 +189,8 @@ public:
 
 	template <class DATA_TYPE2>
 	friend class Matrix;
+
+	friend class TaylorModelVec<DATA_TYPE>;
 };
 
 

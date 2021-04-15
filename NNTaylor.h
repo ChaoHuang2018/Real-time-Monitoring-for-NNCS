@@ -14,6 +14,8 @@ protected:
     double output;
     vector<double> jacobian;
     Interval output_range_IBP;
+    TaylorModelVec<Real> input_tmv;
+    TaylorModel<Real> output_tm;
 
 public:
     NNTaylor();
@@ -21,12 +23,17 @@ public:
 
     void set_taylor_linear(vector<string> state_vars, vector<Interval> network_input_box);
     void set_range_by_IBP(vector<Interval> network_input_box);
+    void set_tm_by_TMP(vector<string> state_vars, vector<Interval> network_input_box, TaylorInfo ti, vector<Interval> tmv_domain);
 
     string get_taylor_expression();
     Interval get_taylor_remainder();
     double get_output();
     vector<double> get_jacobian();
     Interval get_range_by_IBP();
+    TaylorModelVec<Real> get_input_tmv();
+    TaylorModel<Real> get_output_tm();
+
+    void get_output_tmv(TaylorModelVec<Real> &tmv_output, TaylorModelVec<Real> &tmv_input, TaylorInfo ti, vector<Interval> &tmv_domain);
 
     static double inf_norm(Matrix<double> m)
     {

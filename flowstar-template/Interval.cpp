@@ -1786,8 +1786,10 @@ void Interval::rec(Interval & result) const
 {
 	if (mpfr_sgn(lo) <= 0 && mpfr_sgn(up) >= 0)
 	{
-		printf("Exception: Divided by 0.\n");
-		exit(1);
+		Interval tmp(-1e5,1e5);
+		result = tmp;
+//		printf("Exception: Divided by 0.\n");
+//		exit(1);
 	}
 	else
 	{

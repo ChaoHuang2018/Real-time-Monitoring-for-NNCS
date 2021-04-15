@@ -3,7 +3,7 @@ include makefile.local
 LIBS = -lmpfr -lgmp -lgsl -lgslcblas -lm -lglpk
 CFLAGS = -I . -I $(GMP_HOME) -g -O3 -std=c++11
 LINK_FLAGS = -g -L $(GMP_LIB_HOME)
-OBJS = Interval.o Variables.o settings.o Matrix.o Geometry.o Constraints.o Continuous.o
+OBJS = Interval.o Variables.o settings.o Matrix.o Geometry.o Constraints.o Continuous.o BernsteinPoly.o
 
 all: flowstar lib
 

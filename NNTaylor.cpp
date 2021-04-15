@@ -274,6 +274,78 @@ void NNTaylor::set_range_by_IBP(vector<Interval> network_input_box)
     cout << "output range: " << nn_output_range << endl;
 }
 
+void NNTaylor::set_tm_by_TMP(vector<string> state_vars, vector<Interval> network_input_box, TaylorInfo ti, vector<Interval> tmv_domain)
+{
+
+    TaylorModelVec<Real> tmv_input(network_input_box, tmv_domain);
+
+    // layer_info_all_layer stores all the information (value/range of output/jocobian/hessian) of all the layers
+    vector<vector<Neuron>> layer_info_all_layer;
+
+    // process the input layer
+    vector<Neuron> layer_info;
+    for (int i = 0; i < this->nn.get_num_of_inputs(); i++)
+    {
+        Neuron neuron(this->nn.get_num_of_inputs());
+        neuron.set_taylor_model(tmv_input.tms[i]);
+        neuron.set_activation_info("Affine", ti, tmv_domain);
+        layer_info.push_back(neuron);
+    }
+    vector<TaylorModel<Real>> temp_tm_v;
+    for (int i = 0; i < this->nn.get_num_of_inputs(); i++)
+    {
+        temp_tm_v.push_back(layer_info[i].get_taylor_model());
+    }
+    TaylorModelVec<Real> temp_tmv(temp_tm_v);
+    this->input_tmv = temp_tmv;
+    layer_info_all_layer.push_back(layer_info);
+
+    // start to process hidden layers and output layer
+    vector<Neuron> last_layer_info = layer_info;
+    for (int s = 0; s < this->nn.get_num_of_hidden_layers() + 1; s++)
+    {
+        vector<Neuron> this_layer_info;
+        Layer layer = this->nn.get_layers()[s];
+        Matrix<Interval> weight = layer.get_weight();
+        Matrix<Interval> bias = layer.get_bias();
+
+        // cout << "this layer neuron number : " << layer.get_neuron_number_this_layer() << endl;
+
+        // cout << "Layer " << s << ", Weight: " << weight << endl;
+        // cout << "Layer " << s << ", Bias: " << bias << endl;
+
+        for (int i = 0; i < layer.get_neuron_number_this_layer(); i++)
+        {
+            Matrix<Interval> weight_i(1, layer.get_neuron_number_last_layer());
+            weight.getRowVec(weight_i, i);
+            Matrix<Interval> bias_i_matrix(1, 1);
+            bias.getRowVec(bias_i_matrix, i);
+            Interval bias_i = bias_i_matrix[0][0];
+
+            Neuron neuron(this->nn.get_num_of_inputs());
+            neuron.set_taylor_model(last_layer_info, weight_i, bias_i);
+            neuron.set_activation_info(layer.get_activation(), ti, tmv_domain);
+            this_layer_info.push_back(neuron);
+        }
+
+        layer_info_all_layer.push_back(this_layer_info);
+        last_layer_info = this_layer_info;
+    }
+
+    // process the scalar and offset by constructing an addtional virtual single-neuron layer
+    Interval scale_factor = this->nn.get_scale_factor();
+    Interval offset = this->nn.get_offset();
+    vector<Neuron> virtual_layer_info;
+    Neuron virtual_neruon(this->nn.get_num_of_inputs());
+    Matrix<Interval> virtual_weight(1, 1);
+    virtual_weight[0][0] = scale_factor;
+    Interval virtual_bias = -offset * scale_factor;
+    virtual_neruon.set_taylor_model(last_layer_info, virtual_weight, virtual_bias);
+    virtual_neruon.set_activation_info("Affine", ti, tmv_domain);
+
+    this->output_tm = virtual_neruon.get_taylor_model();
+}
+
 string NNTaylor::get_taylor_expression()
 {
     return this->taylor_linear_expression;
@@ -299,6 +371,84 @@ Interval NNTaylor::get_range_by_IBP()
     return this->output_range_IBP;
 }
 
+TaylorModelVec<Real> NNTaylor::get_input_tmv()
+{
+    return this->input_tmv;
+}
+
+TaylorModel<Real> NNTaylor::get_output_tm()
+{
+    return this->output_tm;
+}
+
+void NNTaylor::get_output_tmv(TaylorModelVec<Real> &tmv_output, TaylorModelVec<Real> &tmv_input, TaylorInfo ti, vector<Interval> &tmv_domain)
+{
+    TaylorModelVec<Real> tmvTemp;
+    vector<TaylorModelVec<Real>> tmv_all_layer;
+    tmv_all_layer.push_back(tmv_input);
+    for (int s = 0; s < this->nn.get_num_of_hidden_layers() + 1; s++)
+    {
+        Layer layer = this->nn.get_layers()[s];
+        Matrix<Interval> weight = layer.get_weight();
+        Matrix<Interval> bias = layer.get_bias();
+
+        Matrix<Real> weight_value(weight.rows(), weight.cols());
+        for (int i = 0; i < weight.rows(); i++)
+        {
+            for (int j = 0; j < weight.cols(); j++)
+            {
+                weight_value[i][j] = weight[i][j].sup();
+            }
+        }
+
+        Matrix<Real> bias_value(bias.rows(), bias.cols());
+        for (int i = 0; i < bias.rows(); i++)
+        {
+            for (int j = 0; j < bias.cols(); j++)
+            {
+                bias_value[i][j] = bias[i][j].sup();
+            }
+        }
+
+        // cout << "Layer " << s << " :" << endl;
+        TaylorModelVec<Real> tmv_layer_temp = weight_value * tmv_all_layer[s];
+        // cout << "11111111" << endl;
+        // if (s == 3)
+        // {
+        //     cout << tmv_layer_temp.tms[0].expansion.terms.size() << endl;
+        // }
+        tmv_layer_temp += bias_value;
+        // cout << "22222222" << endl;
+        // the following is tempory for attitude control
+        if (s < this->nn.get_num_of_hidden_layers())
+        {
+            tmv_layer_temp.activate(tmvTemp, tmv_domain, layer.get_activation(), ti.order, ti.bernstein_order, ti.partition_num, ti.cutoff_threshold, ti.g_setting);
+        }
+        else
+        {
+            tmvTemp = tmv_layer_temp;
+        }
+
+        // tmv_layer_temp.activate(tmvTemp, tmv_domain, layer.get_activation(), ti.order, ti.bernstein_order, ti.partition_num, ti.cutoff_threshold, ti.g_setting);
+        // cout << "33333333" << endl;
+        tmv_layer_temp = tmvTemp;
+
+        tmv_all_layer.push_back(tmv_layer_temp);
+    }
+
+    tmv_output = tmv_all_layer.back();
+
+    Matrix<Real> offset(1, 1);
+    offset[0][0] = -nn.get_offset().sup();
+    tmv_output += offset;
+
+    Matrix<Real> scalar(1, 1);
+    scalar[0][0] = nn.get_scale_factor().sup();
+    tmv_output = scalar * tmv_output;
+
+    tmv_all_layer.push_back(tmv_output);
+}
+
 double remainder_interval_arithmetic(vector<Interval> network_input_box, Matrix<Interval> hessian_range)
 {
     // Interval c(0.5, 0.5);
@@ -319,6 +469,9 @@ double remainder_interval_arithmetic(vector<Interval> network_input_box, Matrix<
     Matrix<Interval> state_inter_trans(1, network_input_box.size());
     state_inter.transpose(state_inter_trans);
 
+    //cout << "state_inter_trans size: " << state_inter_trans.rows() << state_inter_trans.cols() << endl;
+    //cout << "hessian_range size: " << hessian_range.rows() << hessian_range.cols() << endl;
+    //cout << "state_inter size: " << state_inter.rows() << state_inter.cols() << endl;
     Matrix<Interval> remainder = state_inter_trans * hessian_range * state_inter * 0.5;
     return remainder[0][0].sup();
 }

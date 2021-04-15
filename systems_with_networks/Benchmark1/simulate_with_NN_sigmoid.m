@@ -1,10 +1,10 @@
 plot( [-0.05, 0.05, 0.05, -0.05, -0.05] , [-0.05,-0.05,0.2,0.2,-0.05] , 'color' , [72/255 130/255 197/255], 'LineWidth', 2.0);
 hold on;
 clear;
-Ts = 0.02;  % Sample Time
+Ts = 0.2;  % Sample Time
 N = 5;    % Prediction horizon
-Duration = 2; % Simulation horizon
-number = 1;
+Duration = 1.8; % Simulation horizon
+number = 50;
 
 % For a usual control 0.1 , 5, 20
 
@@ -15,7 +15,7 @@ number = 1;
 global simulation_result;
 global disturb_range;
 
-disturb_range = 0.1; % Disturbance range
+disturb_range = 0; % Disturbance range
 
 formatSpec = '%f %f\n';
 
@@ -85,7 +85,7 @@ end
 % fclose(file);
 
 % figure;
-plot(trace(1,:),trace(2,:), 'color', [210/255, 95/255, 95/255]);
+plot(simulation_result(1,:),simulation_result(2,:), 'color', [210/255, 95/255, 95/255]);
 % title('Benchmark 1 (sigmoid)', 'FontSize', 14)
 % xlabel('x1', 'FontSize', 14);
 % ylabel('x2', 'FontSize', 14);

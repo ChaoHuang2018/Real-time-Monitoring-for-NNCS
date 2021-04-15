@@ -53,6 +53,11 @@ Matrix<Interval> Neuron::get_second_order_der_range()
     return Matrix<Interval>(this->second_order_der_range);
 }
 
+TaylorModel<Real> Neuron::get_taylor_model()
+{
+    return this->tm;
+}
+
 void Neuron::set_input_value(Interval input_value)
 {
     this->input_value = Interval(input_value);
@@ -178,4 +183,24 @@ void Neuron::set_second_order_der_range(vector<Neuron> last_layer_info, Matrix<I
 void Neuron::set_activation_info(string activation_type, string approach)
 {
     this->activation_info = Activation(activation_type, this->input_value, this->input_range, approach);
+}
+
+void Neuron::set_activation_info(string activation_type, TaylorInfo ti, vector<Interval> tmv_domain)
+{
+    this->activation_info = Activation(activation_type, this->tm, ti, tmv_domain);
+}
+
+void Neuron::set_taylor_model(vector<Neuron> last_layer_info, Matrix<Interval> weight, Interval bias)
+{
+    //this->tmv = 0;
+    for (int j = 0; j < last_layer_info.size(); j++)
+    {
+        this->tm = this->tm + last_layer_info[j].activation_info.tm * weight[0][j].sup();
+    }
+    this->tm += Real(bias.sup());
+}
+
+void Neuron::set_taylor_model(TaylorModel<Real> tm)
+{
+    this->tm = tm;
 }

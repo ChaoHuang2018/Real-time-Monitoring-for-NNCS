@@ -101,6 +101,23 @@ Activation::Activation(string act, Interval in, Interval in_bound, string approa
     }
 }
 
+Activation::Activation(string act, TaylorModel<Real> tm_in, TaylorInfo ti, vector<Interval> tmv_domain)
+{
+    activation = act;
+
+    if (activation == "sigmoid")
+    {
+        TaylorModel<Real> tmTemp;
+        tm_in.sigmoid_taylor(tmTemp, tmv_domain, ti.order, ti.bernstein_order, ti.partition_num, ti.cutoff_threshold, ti.g_setting);
+        this->tm = tmTemp;
+    }
+
+    if (activation == "Affine")
+    {
+        this->tm = tm_in;
+    }
+}
+
 string Activation::get_activation()
 {
     return activation;

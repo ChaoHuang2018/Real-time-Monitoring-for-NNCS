@@ -1,4 +1,5 @@
 #include "flowstar-template/Continuous.h"
+#include "TaylorInfo.h"
 
 using namespace flowstar;
 using namespace std;
@@ -19,9 +20,13 @@ public:
     Interval de_range;
     Interval de2_range;
 
+    TaylorModel<Real> tm;
+
 public:
     Activation();
     Activation(string act, Interval in, Interval in_bound, string approach = "taylor");
+
+    Activation(string act, TaylorModel<Real> tm_in, TaylorInfo ti, vector<Interval> tmv_domain);
 
     string get_activation();
     Interval get_input();
@@ -32,6 +37,8 @@ public:
     Interval get_output_range();
     Interval get_de_range();
     Interval get_de2_range();
+
+    TaylorModel<Real> get_taylor_model();
 
     static Real softplus(Real x);
     static Real softplus_de(Real x);

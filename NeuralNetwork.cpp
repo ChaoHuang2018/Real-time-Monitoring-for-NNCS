@@ -79,6 +79,8 @@ NeuralNetwork::NeuralNetwork(string filename, string act)
         bias0[i][0] = I;
     }
     Layer input_layer(num_of_inputs, network_structure[0], act, weight0, bias0);
+    // cout << "weight0: " << weight0 << endl;
+    // cout << "bias0: " << bias0 << endl;
     layers.push_back(input_layer);
 
     // compute the parameters of hidden layers
@@ -101,6 +103,9 @@ NeuralNetwork::NeuralNetwork(string filename, string act)
             I.set(value);
             bias[i][0] = I;
         }
+
+        // cout << "weight_" + to_string(layer_idx + 1) + ":" << weight << endl;
+        // cout << "bias_" + to_string(layer_idx + 1) + ":" << bias << endl;
         Layer hidden_layer(network_structure[layer_idx], network_structure[layer_idx + 1], act, weight, bias);
         layers.push_back(hidden_layer);
     }

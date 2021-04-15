@@ -85,9 +85,9 @@ vector<Result_Info> run_ex1_taylor(string nn_name, string act_name, string traje
             }
             cout << "Initial guess of the reachable set:" << domain << endl;
             stateSpace = domain;
-            // abstract_domain_by_nn_range(domain, stateSpace, nn, x_current);
-            domain[0][0] = Interval(7.659786642459603e-01, 8.624801728752246e-01);
-            domain[1][0] = Interval(-1.024677427504299e-01, 7.195489429823004e-01);
+            abstract_domain_by_nn_range(domain, stateSpace, nn, x_current);
+            // domain[0][0] = Interval(7.659786642459603e-01, 8.624801728752246e-01);
+            // domain[1][0] = Interval(-1.024677427504299e-01, 7.195489429823004e-01);
             // cout << "x_current: " << x_current << endl;
             cout << "Initial guess of the reachable set after refinement:" << domain << endl;
 
@@ -663,9 +663,9 @@ void abstract_domain_by_nn_range(Matrix<Interval> &domain, Matrix<Interval> stat
 
 int test_ex1()
 {
-    string nn_name = "systems_with_networks/Benchmark1/nn_12_tanh_origin";
+    string nn_name = "systems_with_networks/Benchmark1/nn_1_sigmoid_small_lip";
     string act_name = "tanh";
-    string trajectory_file_name = "systems_with_networks/Benchmark1/nn_12_tanh_origin.txt";
+    string trajectory_file_name = "systems_with_networks/Benchmark1/nn_1_sigmoid_small_lip.txt";
 
     // use taylor model
     vector<Result_Info> result_list_taylor = run_ex1_taylor(nn_name, act_name, trajectory_file_name);
