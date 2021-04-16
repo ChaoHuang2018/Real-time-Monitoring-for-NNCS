@@ -84,8 +84,7 @@ int main(int argc, char *argv[])
 
 	// define the neural network controller
 	string nn_name = "systems_with_networks/Benchmark1/nn_1_tanh_reachnn";
-	string act_name = "tanh";
-	NeuralNetwork nn(nn_name, act_name);
+	NeuralNetwork nn(nn_name);
 
 	unsigned int maxOrder = 15;
 	Global_Computation_Setting g_setting;

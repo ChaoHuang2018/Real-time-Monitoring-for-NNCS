@@ -66,7 +66,7 @@ protected:
 
 public:
     NeuralNetwork();
-    NeuralNetwork(string filename, string act);
+    NeuralNetwork(string filename);
 
     int get_num_of_inputs()
     {

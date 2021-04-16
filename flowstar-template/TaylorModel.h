@@ -357,6 +357,7 @@ namespace flowstar
 		void sigmoid_taylor(TaylorModel<DATA_TYPE> &result, const std::vector<Interval> &domain, const unsigned int taylor_order, const unsigned int bernstein_order, const unsigned int partition_num, const Interval &cutoff_threshold, const Global_Computation_Setting &setting) const;
 		void tanh_taylor(TaylorModel<DATA_TYPE> &result, const std::vector<Interval> &domain, const unsigned int taylor_order, const unsigned int bernstein_order, const unsigned int partition_num, const Interval &cutoff_threshold, const Global_Computation_Setting &setting) const;
 		void relu_taylor(TaylorModel<DATA_TYPE> &result, const std::vector<Interval> &domain, const unsigned int taylor_order, const unsigned int bernstein_order, const unsigned int partition_num, const Interval &cutoff_threshold, const Global_Computation_Setting &setting) const;
+		void affine_taylor(TaylorModel<DATA_TYPE> &result, const std::vector<Interval> &domain, const unsigned int taylor_order, const unsigned int bernstein_order, const unsigned int partition_num, const Interval &cutoff_threshold, const Global_Computation_Setting &setting) const;
 
 		/*
 	void exp_taylor(TaylorModel & result, const std::vector<Interval> & step_exp_table, const int numVars, const int order, const Interval & cutoff_threshold) const;
@@ -2298,6 +2299,10 @@ namespace flowstar
 		{
 			this->relu_taylor(tmTemp, domain, taylor_order, bernstein_order, partition_num, cutoff_threshold, setting);
 		}
+		else if (activation_type == "Affine")
+		{
+			this->affine_taylor(tmTemp, domain, taylor_order, bernstein_order, partition_num, cutoff_threshold, setting);
+		}
 		else
 		{
 			cout << "The activation fundtion can be parsed." << endl;
@@ -2467,6 +2472,30 @@ namespace flowstar
 			result = result_taylor;
 			cout << "Taylor" << endl;
 		}
+	}
+
+	template <>
+	inline void TaylorModel<Real>::affine_taylor(TaylorModel<Real> &result, const std::vector<Interval> &domain, const unsigned int taylor_order, const unsigned int bernstein_order, const unsigned int partition_num, const Interval &cutoff_threshold, const Global_Computation_Setting &setting) const
+	{
+		vector<Real> coe;
+		coe.push_back(Real(0.0));
+		coe.push_back(Real(1.0));
+		UnivariatePolynomial<Real> up(coe);
+
+		Interval rem(0);
+
+		TaylorModel<Real> tmTemp(up.coefficients[up.coefficients.size() - 1], domain.size());
+
+		for (int i = up.coefficients.size() - 2; i >= 0; --i)
+		{
+			tmTemp.mul_ctrunc_assign(*this, domain, taylor_order, cutoff_threshold);
+
+			TaylorModel<Real> tmTemp2(up.coefficients[i], domain.size());
+			tmTemp += tmTemp2;
+		}
+		result = tmTemp;
+		// cout << "Coeff length: " << result.expansion.terms.size() << endl;
+		result.remainder += rem;
 	}
 
 	template <class DATA_TYPE>

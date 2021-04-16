@@ -419,17 +419,7 @@ void NNTaylor::get_output_tmv(TaylorModelVec<Real> &tmv_output, TaylorModelVec<R
         // }
         tmv_layer_temp += bias_value;
         // cout << "22222222" << endl;
-        // the following is tempory for attitude control
-        if (s < this->nn.get_num_of_hidden_layers())
-        {
-            tmv_layer_temp.activate(tmvTemp, tmv_domain, layer.get_activation(), ti.order, ti.bernstein_order, ti.partition_num, ti.cutoff_threshold, ti.g_setting);
-        }
-        else
-        {
-            tmvTemp = tmv_layer_temp;
-        }
-
-        // tmv_layer_temp.activate(tmvTemp, tmv_domain, layer.get_activation(), ti.order, ti.bernstein_order, ti.partition_num, ti.cutoff_threshold, ti.g_setting);
+        tmv_layer_temp.activate(tmvTemp, tmv_domain, layer.get_activation(), ti.order, ti.bernstein_order, ti.partition_num, ti.cutoff_threshold, ti.g_setting);
         // cout << "33333333" << endl;
         tmv_layer_temp = tmvTemp;
 

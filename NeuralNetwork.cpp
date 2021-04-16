@@ -19,7 +19,7 @@ NeuralNetwork::NeuralNetwork()
 {
 }
 
-NeuralNetwork::NeuralNetwork(string filename, string act)
+NeuralNetwork::NeuralNetwork(string filename)
 {
     std::ifstream input(filename);
     std::string line;
@@ -56,6 +56,14 @@ NeuralNetwork::NeuralNetwork(string filename, string act)
     }
     network_structure[network_structure.size() - 1] = num_of_outputs;
 
+    // parse the activation function
+    std::vector<std::string> activation;
+    for (int idx = 0; idx < num_of_hidden_layers + 1; idx++)
+    {
+        getline(input, line);
+        activation.push_back(line);
+    }
+
     // Parse the input text file and store weights and bias
 
     // a question here. need to confirm on 10/20/2020 afternoon.
@@ -78,7 +86,7 @@ NeuralNetwork::NeuralNetwork(string filename, string act)
         I.set(value);
         bias0[i][0] = I;
     }
-    Layer input_layer(num_of_inputs, network_structure[0], act, weight0, bias0);
+    Layer input_layer(num_of_inputs, network_structure[0], activation[0], weight0, bias0);
     // cout << "weight0: " << weight0 << endl;
     // cout << "bias0: " << bias0 << endl;
     layers.push_back(input_layer);
@@ -106,7 +114,7 @@ NeuralNetwork::NeuralNetwork(string filename, string act)
 
         // cout << "weight_" + to_string(layer_idx + 1) + ":" << weight << endl;
         // cout << "bias_" + to_string(layer_idx + 1) + ":" << bias << endl;
-        Layer hidden_layer(network_structure[layer_idx], network_structure[layer_idx + 1], act, weight, bias);
+        Layer hidden_layer(network_structure[layer_idx], network_structure[layer_idx + 1], activation[layer_idx + 1], weight, bias);
         layers.push_back(hidden_layer);
     }
     // Affine mapping of the output
