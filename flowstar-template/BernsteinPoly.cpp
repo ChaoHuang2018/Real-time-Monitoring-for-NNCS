@@ -125,6 +125,11 @@ double tanh_lips(Interval intv)
 
 UnivariatePolynomial<Real> gen_bern_poly(string act, Interval intv, int d)
 {
+    time_t start_timer;
+    time_t end_timer;
+    double seconds;
+    time(&start_timer);
+
     double a = intv.inf();
     double b = intv.sup();
 
@@ -216,6 +221,10 @@ UnivariatePolynomial<Real> gen_bern_poly(string act, Interval intv, int d)
         bern_poly.coefficients.push_back(Real(0));
     }
 
+    time(&end_timer);
+    seconds = -difftime(start_timer, end_timer);
+    cout << "Berns generation time: " << seconds << " seconds" << endl;
+
     cout << "Interval: " << intv << endl;
     cout << "bern_poly: " << bern_poly << endl;
 
@@ -244,6 +253,17 @@ double gen_bern_err(string act, Interval intv, int degree)
 
 double gen_bern_err_by_sample(UnivariatePolynomial<Real> berns, string act, Interval intv, int partition)
 {
+    time_t start_timer0;
+    time_t start_timer;
+    time_t end_timer;
+    time_t end_timer1;
+    time_t end_timer2;
+    double seconds;
+    vector<double> berns_time;
+    vector<double> act_time;
+
+    time(&start_timer0);
+
     double a = intv.inf();
     double b = intv.sup();
 
@@ -287,7 +307,16 @@ double gen_bern_err_by_sample(UnivariatePolynomial<Real> berns, string act, Inte
         double point = a + 1.0 * (b - a) / partition * (i + 0.5);
 
         Real berns_value;
+        time(&start_timer);
         berns.evaluate(berns_value, Real(point));
+        time(&end_timer1);
+        seconds = -difftime(start_timer, end_timer1);
+        berns_time.push_back(seconds);
+        double fun_value = fun_act(point);
+        time(&end_timer2);
+        seconds = -difftime(end_timer1, end_timer2);
+        act_time.push_back(seconds);
+
         double temp_diff = abs(fun_act(point) - berns_value.toDouble());
 
         if (temp_diff > sample_diff)
@@ -298,7 +327,21 @@ double gen_bern_err_by_sample(UnivariatePolynomial<Real> berns, string act, Inte
     cout << "Interval: " << intv << endl;
     cout << "sample diff: " << sample_diff << endl;
 
+    double total_berns_time = 0.0;
+    double total_act_time = 0.0;
+    for (int i = 0; i < partition; i++)
+    {
+        total_berns_time += berns_time[i];
+        total_act_time += act_time[i];
+    }
+    cout << "average berns evaluation time: " << total_berns_time / (partition * 1.0) << " seconds" << endl;
+    cout << "average activation evaluation time: " << total_act_time / (partition * 1.0) << " seconds" << endl;
+
     double overhead = 1.0 * lips * intv.width() / partition;
+
+    time(&end_timer);
+    seconds = -difftime(start_timer0, end_timer);
+    cout << "Berns err time: " << seconds << " seconds" << endl;
 
     return overhead + sample_diff;
 }

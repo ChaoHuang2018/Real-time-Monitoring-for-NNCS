@@ -383,6 +383,10 @@ TaylorModel<Real> NNTaylor::get_output_tm()
 
 void NNTaylor::get_output_tmv(TaylorModelVec<Real> &tmv_output, TaylorModelVec<Real> &tmv_input, TaylorInfo ti, vector<Interval> &tmv_domain)
 {
+    time_t start_timer;
+    time_t end_timer;
+    double seconds;
+
     TaylorModelVec<Real> tmvTemp;
     vector<TaylorModelVec<Real>> tmv_all_layer;
     tmv_all_layer.push_back(tmv_input);
@@ -411,7 +415,11 @@ void NNTaylor::get_output_tmv(TaylorModelVec<Real> &tmv_output, TaylorModelVec<R
         }
 
         // cout << "Layer " << s << " :" << endl;
+        time(&start_timer);
         TaylorModelVec<Real> tmv_layer_temp = weight_value * tmv_all_layer[s];
+        time(&end_timer);
+        seconds = -difftime(start_timer, end_timer);
+        cout << "Taylor model matrix mul: " << seconds << " seconds" << endl;
         // cout << "11111111" << endl;
         // if (s == 3)
         // {
@@ -420,7 +428,6 @@ void NNTaylor::get_output_tmv(TaylorModelVec<Real> &tmv_output, TaylorModelVec<R
         tmv_layer_temp += bias_value;
         // cout << "22222222" << endl;
         tmv_layer_temp.activate(tmvTemp, tmv_domain, layer.get_activation(), ti.order, ti.bernstein_order, ti.partition_num, ti.cutoff_threshold, ti.g_setting);
-        // cout << "33333333" << endl;
         tmv_layer_temp = tmvTemp;
 
         tmv_all_layer.push_back(tmv_layer_temp);

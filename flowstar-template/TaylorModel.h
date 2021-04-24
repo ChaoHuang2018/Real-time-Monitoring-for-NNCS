@@ -2284,9 +2284,14 @@ namespace flowstar
 	template <class DATA_TYPE>
 	inline void TaylorModel<DATA_TYPE>::activate(TaylorModel<DATA_TYPE> &result, const std::vector<Interval> &domain, const std::string &activation_type, const unsigned int taylor_order, const unsigned int bernstein_order, const unsigned int partition_num, const Interval &cutoff_threshold, const Global_Computation_Setting &setting) const
 	{
+		time_t start_timer;
+		time_t end_timer;
+		double seconds;
+
 		result.clear();
 		TaylorModel<DATA_TYPE> tmTemp;
 
+		time(&start_timer);
 		if (activation_type == "sigmoid")
 		{
 			this->sigmoid_taylor(tmTemp, domain, taylor_order, bernstein_order, partition_num, cutoff_threshold, setting);
@@ -2307,6 +2312,10 @@ namespace flowstar
 		{
 			cout << "The activation fundtion can be parsed." << endl;
 		}
+		time(&end_timer);
+		seconds = -difftime(start_timer, end_timer);
+		cout << "Activation Abstraction Time: " << seconds << " seconds" << endl
+			 << endl;
 		result = tmTemp;
 	}
 
@@ -2339,9 +2348,14 @@ namespace flowstar
 	template <>
 	inline void TaylorModel<Real>::sigmoid_taylor(TaylorModel<Real> &result, const std::vector<Interval> &domain, const unsigned int taylor_order, const unsigned int bernstein_order, const unsigned int partition_num, const Interval &cutoff_threshold, const Global_Computation_Setting &setting) const
 	{
+		time_t start_timer;
+		time_t end_timer;
+		double seconds;
+
 		Interval tmRange;
 		this->intEval(tmRange, domain);
 
+		time(&start_timer);
 		UnivariatePolynomial<Real> up = gen_bern_poly("sigmoid", tmRange, bernstein_order);
 
 		double error = gen_bern_err_by_sample(up, "sigmoid", tmRange, partition_num);
@@ -2362,6 +2376,11 @@ namespace flowstar
 		result_berns = tmTemp;
 		result_berns.remainder += rem;
 
+		time(&end_timer);
+		seconds = -difftime(start_timer, end_timer);
+		cout << "Berns time: " << seconds << " seconds" << endl;
+
+		time(&start_timer);
 		TaylorModel<Real> tmTemp1 = (*this) * (-1);
 		TaylorModel<Real> tmTemp2;
 		tmTemp1.exp_taylor(tmTemp2, domain, taylor_order, cutoff_threshold, setting);
@@ -2370,6 +2389,10 @@ namespace flowstar
 
 		TaylorModel<Real> result_taylor;
 		tmTemp2.rec_taylor(result_taylor, domain, taylor_order, cutoff_threshold, setting);
+
+		time(&end_timer);
+		seconds = -difftime(start_timer, end_timer);
+		cout << "Taylor time: " << seconds << " seconds" << endl;
 
 		if (result_berns.remainder.width() < result_taylor.remainder.width())
 		{
