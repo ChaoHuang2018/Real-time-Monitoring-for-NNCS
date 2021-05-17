@@ -3,18 +3,17 @@ hold on;
 clear;
 Ts = 0.2;  % Sample Time
 N = 3;    % Prediction horizon
-Duration = 4; % Simulation horizon
+Duration = 2.6; % Simulation horizon
 
 
 global simulation_result;
 global disturb_range;
 
-disturb_range = 0.1; % Disturbance range
+disturb_range = 0; % Disturbance range
 
 formatSpec = '%f %f %f\n';
 
-fileID = fopen('nn_2_relu.txt','w');
-
+fileID = fopen('nn_2_sigmoid.txt','w');
 
 for m=1:100
 
@@ -42,9 +41,9 @@ x_now = x;
 % Start simulation
 for ct = 1:(Duration/Ts)  
      % u = NN_output(x_now,10,1,'neural_network_controller');
-     u = NN_output(x_now,10,1,'nn_2_relu');
+     % u = NN_output(x_now,10,1,'nn_15_relu');
      %u = NN_output_tanh(x_now,0,10,'nn_15_tanh');
-     
+     u = NN_output(x_now,'nn_2_relu');
      z(1) = x_now(1) ;
      z(2) = x_now(2) ;
      z(3) = x_now(3) ;
@@ -58,7 +57,7 @@ for ct = 1:(Duration/Ts)
 end
 
 plot(simulation_result(1,:),simulation_result(2,:), 'color', [223/255, 67/255, 69/255]);
-% title('Benchmark 4 (ReLU)', 'FontSize', 14)
+% title('Benchmark 4 (sigmoid)', 'FontSize', 14)
 % xlabel('x1', 'FontSize', 14);
 % ylabel('x2', 'FontSize', 14);
 set(gca,'FontSize',16)
@@ -69,9 +68,10 @@ fprintf(fileID, formatSpec, simulation_result(1:3,:));
 end
 fclose(fileID);
 
+
 % fig = gcf;
 % fig.PaperPositionMode = 'auto';
 % fig_pos = fig.PaperPosition;
 % fig.PaperSize = [fig_pos(3) fig_pos(4)];
-% print(fig,'../Benchmarks/benchmark4_relu','-dpdf')
-% export_fig ../Benchmarks/benchmark4_relu.pdf
+% print(fig,'../Benchmarks/benchmark4_sigmoid','-dpdf')
+% export_fig ../Benchmarks/benchmark4_sigmoid.pdf

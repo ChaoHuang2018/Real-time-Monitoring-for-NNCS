@@ -1,4 +1,4 @@
-function[h] = do_thresholding(r)
+function[h] = do_thresholding_relu(r)
     [size_1, size_2]  = size(r);
     out = zeros(size_1,1);
     for i = 1:size_1

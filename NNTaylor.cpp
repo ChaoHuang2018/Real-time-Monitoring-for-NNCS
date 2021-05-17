@@ -425,8 +425,8 @@ void NNTaylor::get_output_tmv(TaylorModelVec<Real> &tmv_output, TaylorModelVec<R
         // {
         //     cout << tmv_layer_temp.tms[0].expansion.terms.size() << endl;
         // }
+        cout << tmv_layer_temp.tms.size() << endl;
         tmv_layer_temp += bias_value;
-        // cout << "22222222" << endl;
         tmv_layer_temp.activate(tmvTemp, tmv_domain, layer.get_activation(), ti.order, ti.bernstein_order, ti.partition_num, ti.cutoff_threshold, ti.g_setting);
         tmv_layer_temp = tmvTemp;
 
@@ -435,15 +435,25 @@ void NNTaylor::get_output_tmv(TaylorModelVec<Real> &tmv_output, TaylorModelVec<R
 
     tmv_output = tmv_all_layer.back();
 
-    Matrix<Real> offset(1, 1);
-    offset[0][0] = -nn.get_offset().sup();
+    Matrix<Real> offset(nn.get_num_of_outputs(), 1);
+    for (int i = 0; i < nn.get_num_of_outputs(); i++)
+    {
+        offset[i][0] = -nn.get_offset().sup();
+    }
     tmv_output += offset;
 
-    Matrix<Real> scalar(1, 1);
-    scalar[0][0] = nn.get_scale_factor().sup();
+    Matrix<Real> scalar(nn.get_num_of_outputs(), nn.get_num_of_outputs());
+    for (int i = 0; i < nn.get_num_of_outputs(); i++)
+    {
+        scalar[i][i] = nn.get_scale_factor().sup();
+    }
     tmv_output = scalar * tmv_output;
-
+    // cout << "1111111111111111111111" << endl;
     tmv_all_layer.push_back(tmv_output);
+
+    Interval box;
+    tmv_output.tms[0].intEval(box, tmv_domain);
+    cout << "neural network output range by TMP: " << box << endl;
 }
 
 double remainder_interval_arithmetic(vector<Interval> network_input_box, Matrix<Interval> hessian_range)

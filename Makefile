@@ -5,14 +5,14 @@ LIB_HOME = ./flowstar-template
 LIBS = -lflowstar -lmpfr -lgmp -lgsl -lgslcblas -lm -lglpk
 CFLAGS = -I . -I $(HOME) -g -O3 -std=c++11
 LINK_FLAGS = -g -L$(LIB_HOME) -L/usr/local/lib -L$(NN_HOME)
-OBJS = NeuralNetwork.o Activation.o Neuron.o TaylorInfo.o NNTaylor.o domain_computation.o dynamics_linearization.o LTI_Abstraction.o Trajectories.o Result_Info.o systems/nn_attitude_control_sigmoid.o
+OBJS = NeuralNetwork.o Activation.o Neuron.o TaylorInfo.o NNTaylor.o domain_computation.o dynamics_linearization.o LTI_Abstraction.o Trajectories.o Result_Info.o systems/nn_2_tanh.o
 
 all: test
 
 runtime: $(OBJS)
 	g++-8 -O3 -w $(LINK_FLAGS) $^ $(LIBS)
 
-test: systems/nn_attitude_control_sigmoid.o $(OBJS)
+test: systems/nn_2_tanh.o $(OBJS)
 	g++-8 -O3 -w $(LINK_FLAGS) -o $@ $^ $(LIBS)
 
 %.o: %.cc

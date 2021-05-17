@@ -9,7 +9,7 @@ Duration = 4; % Simulation horizon
 global simulation_result;
 global disturb_range;
 
-disturb_range = 0.1; % Disturbance range
+disturb_range = 0; % Disturbance range
 
 formatSpec = '%f %f %f\n';
 
@@ -43,7 +43,7 @@ for ct = 1:(Duration/Ts)
      % u = NN_output(x_now,10,1,'neural_network_controller');
      % u = NN_output(x_now,10,1,'nn_15_relu');
      %u = NN_output_tanh(x_now,0,10,'nn_15_tanh');
-     u = NN_output_sigmoid(x_now,0.5,20,'nn_2_sigmoid');
+     u = NN_output(x_now,'nn_2_sigmoid');
      z(1) = x_now(1) ;
      z(2) = x_now(2) ;
      z(3) = x_now(3) ;

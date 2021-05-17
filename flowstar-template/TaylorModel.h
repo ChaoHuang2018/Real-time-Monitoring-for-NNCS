@@ -1881,6 +1881,7 @@ namespace flowstar
 
 		Interval tmFPolyRange;
 		tmF.polyRange(tmFPolyRange, domain);
+		// cout << "111111: " << result.expansion.terms.size() << endl;
 
 		for (int i = order; i > 0; --i)
 		{
@@ -1890,10 +1891,15 @@ namespace flowstar
 
 			result.expansion += polyOne;
 		}
+		// cout << "2222222: " << result.expansion.terms.size() << endl;
 
 		result *= const_part;
 
-		result.cutoff(domain, cutoff_threshold);
+		// cout << "333333333: " << result.expansion.terms.size() << endl;
+
+		// result.cutoff(domain, cutoff_threshold);
+
+		// cout << "44444444: " << result.expansion.terms.size() << endl;
 
 		Interval rem, tmRange;
 		tmRange = tmFPolyRange + tmF.remainder;
@@ -2362,6 +2368,7 @@ namespace flowstar
 
 		Interval rem(-error, error);
 
+		// cout << "up: " << up << endl;
 		TaylorModel<Real> tmTemp(up.coefficients[up.coefficients.size() - 1], domain.size());
 
 		for (int i = up.coefficients.size() - 2; i >= 0; --i)
@@ -2378,21 +2385,23 @@ namespace flowstar
 
 		time(&end_timer);
 		seconds = -difftime(start_timer, end_timer);
-		cout << "Berns time: " << seconds << " seconds" << endl;
+		// cout << "Berns time: " << seconds << " seconds" << endl;
 
 		time(&start_timer);
 		TaylorModel<Real> tmTemp1 = (*this) * (-1);
 		TaylorModel<Real> tmTemp2;
 		tmTemp1.exp_taylor(tmTemp2, domain, taylor_order, cutoff_threshold, setting);
 
+		cout << "tmTemp2: " << tmTemp2.expansion.terms.size() << endl;
 		tmTemp2 += 1;
+		cout << "tmTemp2+1: " << tmTemp2.expansion.terms.size() << endl;
 
 		TaylorModel<Real> result_taylor;
 		tmTemp2.rec_taylor(result_taylor, domain, taylor_order, cutoff_threshold, setting);
 
 		time(&end_timer);
 		seconds = -difftime(start_timer, end_timer);
-		cout << "Taylor time: " << seconds << " seconds" << endl;
+		// cout << "Taylor time: " << seconds << " seconds" << endl;
 
 		if (result_berns.remainder.width() < result_taylor.remainder.width())
 		{

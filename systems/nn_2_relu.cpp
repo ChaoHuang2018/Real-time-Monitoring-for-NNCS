@@ -8,45 +8,29 @@ using namespace flowstar;
 
 int main(int argc, char *argv[])
 {
-	intervalNumPrecision = 300;
+	intervalNumPrecision = 600;
 
 	// Declaration of the state variables.
-	unsigned int numVars = 9;
+	unsigned int numVars = 4;
 
-	// intput format (\omega_1, \psi_1, \omega_2, \psi_2, \omega_3, \psi_3)
 	int x0_id = stateVars.declareVar("x0");
 	int x1_id = stateVars.declareVar("x1");
 	int x2_id = stateVars.declareVar("x2");
-	int x3_id = stateVars.declareVar("x3");
-	int x4_id = stateVars.declareVar("x4");
-	int x5_id = stateVars.declareVar("x5");
-	int u0_id = stateVars.declareVar("u0");
-	int u1_id = stateVars.declareVar("u1");
-	int u2_id = stateVars.declareVar("u2");
+	int u_id = stateVars.declareVar("u");
 
 	int domainDim = numVars + 1;
 
 	// Define the continuous dynamics.
-	Expression_AST<Real> deriv_x0("u0/4 + (x2*x4)/4"); // theta_r = 0
-	Expression_AST<Real> deriv_x1("u1/2 - (3*x0*x4)/2");
-	Expression_AST<Real> deriv_x2("u2 + 2*x0*x2");
-	Expression_AST<Real> deriv_x3("x2*(x3/2 + (x1*x5)/2) - x2*(x5/2 - (x1*x3)/2) + x0*(x1^2/2 + 1/2)");
-	Expression_AST<Real> deriv_x4("x0*(x5/2 + (x1*x3)/2) - x4*(x1/2 - (x3*x5)/2) + x2*(x3^2/2 + 1/2)");
-	Expression_AST<Real> deriv_x5("x1*(x1/2 + (x3*x5)/2) - x0*(x3/2 - (x1*x5)/2) + x4*(x5^2/2 + 1/2)");
-	Expression_AST<Real> deriv_u0("0");
-	Expression_AST<Real> deriv_u1("0");
-	Expression_AST<Real> deriv_u2("0");
+	Expression_AST<Real> deriv_x0("x1 + 0.5*(x2^2)");
+	Expression_AST<Real> deriv_x1("x2");
+	Expression_AST<Real> deriv_x2("u");
+	Expression_AST<Real> deriv_u("0");
 
 	vector<Expression_AST<Real>> ode_rhs(numVars);
 	ode_rhs[x0_id] = deriv_x0;
 	ode_rhs[x1_id] = deriv_x1;
 	ode_rhs[x2_id] = deriv_x2;
-	ode_rhs[x3_id] = deriv_x3;
-	ode_rhs[x4_id] = deriv_x4;
-	ode_rhs[x5_id] = deriv_x5;
-	ode_rhs[u0_id] = deriv_u0;
-	ode_rhs[u1_id] = deriv_u1;
-	ode_rhs[u2_id] = deriv_u2;
+	ode_rhs[u_id] = deriv_u;
 
 	Deterministic_Continuous_Dynamics dynamics(ode_rhs);
 
@@ -59,13 +43,13 @@ int main(int argc, char *argv[])
 	setting.setFixedStepsize(0.01, order);
 
 	// time horizon for a single control step
-	setting.setTime(0.02);
+	setting.setTime(0.2);
 
 	// cutoff threshold
-	setting.setCutoffThreshold(1e-7);
+	setting.setCutoffThreshold(1e-10);
 
 	// queue size for the symbolic remainder
-	setting.setQueueSize(2000);
+	setting.setQueueSize(1000);
 
 	// print out the steps
 	setting.printOff();
@@ -85,18 +69,12 @@ int main(int argc, char *argv[])
 	 */
 	double w = stod(argv[1]);
 	int steps = stoi(argv[2]);
-	Interval init_x0(0.1 - w, 0.1 + w), init_x1(-0.2 - w, -0.2 + w), init_x2(-0.2 - w, -0.2 + w), init_x3(0.3 - w, 0.3 + w), init_x4(0.05 - w, 0.05 + w), init_x5(0 - w, -0 + w);
-	Interval init_u0(0), init_u1(0), init_u2(0);
+	Interval init_x0(0.4 - w, 0.4 + w), init_x1(0.3 - w, 0.3 + w), init_x2(0.4 - w, 0.4 + w), init_u(0);
 	std::vector<Interval> X0;
 	X0.push_back(init_x0);
 	X0.push_back(init_x1);
 	X0.push_back(init_x2);
-	X0.push_back(init_x3);
-	X0.push_back(init_x4);
-	X0.push_back(init_x5);
-	X0.push_back(init_u0);
-	X0.push_back(init_u1);
-	X0.push_back(init_u2);
+	X0.push_back(init_u);
 
 	// translate the initial set to a flowpipe
 	Flowpipe initial_set(X0);
@@ -108,7 +86,7 @@ int main(int argc, char *argv[])
 	Result_of_Reachability result;
 
 	// define the neural network controller
-	string nn_name = "systems_with_networks/AttitudeControl/CLF_controller_layer_num_3";
+	string nn_name = "systems_with_networks/Benchmark2/nn_2_relu";
 	NeuralNetwork nn(nn_name);
 
 	unsigned int maxOrder = 15;
@@ -117,9 +95,9 @@ int main(int argc, char *argv[])
 
 	// the order in use
 	// unsigned int order = 5;
-	Interval cutoff_threshold(-1e-7, 1e-7);
+	Interval cutoff_threshold(-1e-10, 1e-10);
 	unsigned int bernstein_order = stoi(argv[3]);
-	unsigned int partition_num = 2000;
+	unsigned int partition_num = 4000;
 
 	double err_max = 0;
 	time_t start_timer;
@@ -130,6 +108,7 @@ int main(int argc, char *argv[])
 	vector<string> state_vars;
 	state_vars.push_back("x0");
 	state_vars.push_back("x1");
+	state_vars.push_back("x2");
 
 	// perform 35 control steps
 	for (int iter = 0; iter < steps; ++iter)
@@ -139,10 +118,14 @@ int main(int argc, char *argv[])
 		//initial_set.intEval(box, order, setting.tm_setting.cutoff_threshold);
 		TaylorModelVec<Real> tmv_input;
 
-		for (int i = 0; i < 6; i++)
-		{
-			tmv_input.tms.push_back(initial_set.tmvPre.tms[i]);
-		}
+		// tmv_input.tms.push_back(initial_set.tmvPre.tms[0]);
+		// tmv_input.tms.push_back(initial_set.tmvPre.tms[1]);
+
+		TaylorModelVec<Real> tmv_temp;
+		initial_set.compose(tmv_temp, order, cutoff_threshold);
+		tmv_input.tms.push_back(tmv_temp.tms[0]);
+		tmv_input.tms.push_back(tmv_temp.tms[1]);
+		tmv_input.tms.push_back(tmv_temp.tms[2]);
 
 		// taylor propagation
 		NNTaylor nn_taylor(nn);
@@ -150,9 +133,10 @@ int main(int argc, char *argv[])
 		TaylorModelVec<Real> tmv_output;
 		nn_taylor.get_output_tmv(tmv_output, tmv_input, ti, initial_set.domain);
 		// cout << "initial_set.domain: " << initial_set.domain[0] << initial_set.domain[1] << endl;
-		Matrix<Interval> rm1(nn.get_num_of_outputs(), 1);
+		Matrix<Interval> rm1(1, 1);
 		tmv_output.Remainder(rm1);
 		cout << rm1 << endl;
+		cout << "Neural network taylor remainder: " << rm1 << endl;
 
 		// taylor
 		// NNTaylor nn_taylor1(nn);
@@ -180,9 +164,12 @@ int main(int argc, char *argv[])
 		// if (rm1[0][0].width() < rem.width())
 		if (true)
 		{
-			initial_set.tmvPre.tms[u0_id] = tmv_output.tms[0];
-			initial_set.tmvPre.tms[u1_id] = tmv_output.tms[1];
-			initial_set.tmvPre.tms[u2_id] = tmv_output.tms[2];
+			tmv_temp.tms[u_id] = tmv_output.tms[0];
+			Flowpipe flow_temp(tmv_temp, initial_set.domain, cutoff_threshold);
+			initial_set = flow_temp;
+
+			// initial_set.tmvPre.tms[u_id] = tmv_output.tms[0];
+
 			cout << "TM -- Propagation" << endl;
 		}
 		else
@@ -196,10 +183,12 @@ int main(int argc, char *argv[])
 		if (result.status == COMPLETED_SAFE || result.status == COMPLETED_UNSAFE || result.status == COMPLETED_UNKNOWN)
 		{
 			initial_set = result.fp_end_of_time;
+			cout << "Flowpipe taylor remainder: " << initial_set.tmv.tms[0].remainder << "     " << initial_set.tmv.tms[1].remainder << endl;
 		}
 		else
 		{
 			printf("Terminated due to too large overestimation.\n");
+			return 1;
 		}
 	}
 
@@ -207,6 +196,16 @@ int main(int argc, char *argv[])
 	string reach_result;
 	reach_result = "Verification result: Unknown(35)";
 	result.fp_end_of_time.intEval(end_box, order, setting.tm_setting.cutoff_threshold);
+
+	if (end_box[0].inf() >= 0.0 && end_box[0].sup() <= 0.2 && end_box[1].inf() >= 0.05 && end_box[1].sup() <= 0.3)
+	{
+		reach_result = "Verification result: Yes(35)";
+	}
+
+	if (end_box[0].inf() >= 0.2 || end_box[0].sup() <= 0.0 || end_box[1].inf() >= 0.3 || end_box[1].sup() <= 0.05)
+	{
+		reach_result = "Verification result: No(35)";
+	}
 
 	time(&end_timer);
 	seconds = difftime(start_timer, end_timer);
@@ -226,7 +225,7 @@ int main(int argc, char *argv[])
 
 	std::string running_time = "Running Time: " + to_string(-seconds) + " seconds";
 
-	ofstream result_output("./outputs/nn_ac_sigmoid.txt");
+	ofstream result_output("./outputs/nn_2_relu.txt");
 	if (result_output.is_open())
 	{
 		result_output << reach_result << endl;
@@ -234,13 +233,7 @@ int main(int argc, char *argv[])
 	}
 	// you need to create a subdir named outputs
 	// the file name is example.m and it is put in the subdir outputs
-	plot_setting.plot_2D_interval_MATLAB("nn_ac_sigmoid_x0_x1", result);
-
-	plot_setting.setOutputDims(x2_id, x3_id);
-	plot_setting.plot_2D_interval_MATLAB("nn_ac_sigmoid_x2_x3", result);
-
-	plot_setting.setOutputDims(x4_id, x5_id);
-	plot_setting.plot_2D_interval_MATLAB("nn_ac_sigmoid_x4_x5", result);
+	plot_setting.plot_2D_interval_MATLAB("nn_2_relu", result);
 
 	return 0;
 }
