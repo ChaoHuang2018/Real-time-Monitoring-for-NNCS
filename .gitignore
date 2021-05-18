@@ -8,7 +8,7 @@
 !*/
 
 #
-!systems_with_networks/
+!systems_with_networks/*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
