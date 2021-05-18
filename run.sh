@@ -1,16 +1,16 @@
 make && \
-    # ./benchmark1_relu 0.01 35 4 6 && \  # empty poly
-    ./benchmark1_relu_tanh 0.01 35 4 6 && \
-    ./benchmark1_sigmoid 0.01 35 4 6 && \
-    ./benchmark1_tanh 0.01 35 4 6 && \
-    ./benchmark2_relu 0.01 10 4 6 && \
-    ./benchmark2_relu_tanh 0.01 10 4 6 && \
-    ./benchmark2_sigmoid 0.01 10 4 6 && \
-    # ./benchmark2_tanh 0.01 10 4 6 && \  # dimension mismatch
-    ./benchmark3_relu 0.01 60 4 6 && \
-    ./benchmark3_relu_sigmoid 0.01 60 4 6 && \
-    ./benchmark3_sigmoid 0.01 60 4 6 && \
-    ./benchmark3_tanh 0.01 60 4 6 && \
+    # ./benchmark1_relu 0.05 35 4 6 && \  # empty poly
+    ./benchmark1_relu_tanh 0.05 35 4 6 && \
+    ./benchmark1_sigmoid 0.05 35 4 6 && \
+    # ./benchmark1_tanh 0.05 35 4 6 && \  # Too large overestimation
+    ./benchmark2_relu 0.1 10 4 6 && \
+    ./benchmark2_relu_tanh 0.1 10 4 6 && \
+    ./benchmark2_sigmoid 0.1 10 4 6 && \
+    # ./benchmark2_tanh 0.1 10 4 6 && \  # dimension mismatch
+    ./benchmark3_relu 0.05 60 4 6 && \
+    ./benchmark3_relu_sigmoid 0.05 60 4 6 && \
+    ./benchmark3_sigmoid 0.05 60 4 6 && \
+    ./benchmark3_tanh 0.05 60 4 6 && \
     ./benchmark4_relu 0.01 10 4 6 && \
     ./benchmark4_relu_tanh 0.01 10 4 6 && \
     ./benchmark4_sigmoid 0.01 10 4 6 && \
