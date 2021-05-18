@@ -1,4 +1,5 @@
 #include "flowstar-template/Continuous.h"
+#include "flowstar-template/Symbolic_Remainder_NN.h"
 #include "Neuron.h"
 #include "NeuralNetwork.h"
 
@@ -34,6 +35,8 @@ public:
     TaylorModel<Real> get_output_tm();
 
     void get_output_tmv(TaylorModelVec<Real> &tmv_output, TaylorModelVec<Real> &tmv_input, TaylorInfo ti, vector<Interval> &tmv_domain);
+
+    void NN_Reach(TaylorModelVec<Real> &tmv_output, TaylorModelVec<Real> &tmv_input, TaylorInfo ti, vector<Interval> &tmv_domain);
 
     static double inf_norm(Matrix<double> m)
     {

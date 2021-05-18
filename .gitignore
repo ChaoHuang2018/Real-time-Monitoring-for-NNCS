@@ -7,6 +7,9 @@
 # Unignore all dirs
 !*/
 
+#
+!systems_with_networks/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
