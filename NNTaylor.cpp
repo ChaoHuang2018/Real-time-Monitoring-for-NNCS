@@ -647,7 +647,7 @@ void NNTaylor::NN_Reach(TaylorModelVec<Real> &tmv_output, TaylorModelVec<Real> &
                 Real tmp = 1 / sup;
                 invS.push_back(tmp);
                 symbolic_remainder.scalars[i] = tmp;
-                range_of_x0[i] = intUnit;
+                // range_of_x0[i] = intUnit;
             }
         }
 
