@@ -242,7 +242,9 @@ int main(int argc, char *argv[])
 
 	std::string running_time = "Running Time: " + to_string(-seconds) + " seconds";
 
-	ofstream result_output("./outputs/reachnn_benchmark_6_tora_tanh.txt");
+	std::string choice(argv[5]);
+
+	ofstream result_output("./outputs/reachnn_benchmark_6_tora_tanh_" + choice + ".txt");
 	if (result_output.is_open())
 	{
 		result_output << reach_result << endl;
@@ -250,7 +252,7 @@ int main(int argc, char *argv[])
 	}
 	// you need to create a subdir named outputs
 	// the file name is example.m and it is put in the subdir outputs
-	plot_setting.plot_2D_interval_MATLAB("reachnn_benchmark_6_tora_tanh", result);
+	plot_setting.plot_2D_interval_MATLAB("reachnn_benchmark_6_tora_tanh_" + choice, result);
 
 	return 0;
 }

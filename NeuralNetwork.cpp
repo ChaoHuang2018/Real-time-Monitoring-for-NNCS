@@ -46,7 +46,7 @@ NeuralNetwork::NeuralNetwork(string filename)
     getline(input, line);
     num_of_hidden_layers = stoi(line);
 
-    // cout << num_of_inputs << ", " << num_of_outputs << ", " << num_of_hidden_layers;
+    // cout << "num_of_inputs" << num_of_inputs << ", " << num_of_outputs << ", " << num_of_hidden_layers;
 
     std::vector<int> network_structure(num_of_hidden_layers + 1, 0);
     for (int idx = 0; idx < num_of_hidden_layers; idx++)

@@ -8,7 +8,7 @@ using namespace flowstar;
 
 int main(int argc, char *argv[])
 {
-	intervalNumPrecision = 600;
+	intervalNumPrecision = 2000;
 
 	// Declaration of the state variables.
 	unsigned int numVars = 3;
@@ -37,7 +37,7 @@ int main(int argc, char *argv[])
 	unsigned int order = stoi(argv[4]);
 
 	// stepsize and order for reachability analysis
-	setting.setFixedStepsize(0.01, order);
+	setting.setFixedStepsize(0.02, order);
 
 	// time horizon for a single control step
 	setting.setTime(0.2);
@@ -108,7 +108,7 @@ int main(int argc, char *argv[])
 	// perform 35 control steps
 	for (int iter = 0; iter < steps; ++iter)
 	{
-		cout << "Step " << iter << " starts.      " << endl;
+		cout << "--------------------  Step " << iter << " starts. ---------------" << endl;
 		//vector<Interval> box;
 		//initial_set.intEval(box, order, setting.tm_setting.cutoff_threshold);
 		TaylorModelVec<Real> tmv_input;

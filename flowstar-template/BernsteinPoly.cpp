@@ -130,6 +130,8 @@ UnivariatePolynomial<Real> gen_bern_poly(string act, Interval intv, int d)
     double seconds;
     time(&start_timer);
 
+    cout << "intv: " << intv << endl;
+
     double a = intv.inf();
     double b = intv.sup();
 
@@ -223,9 +225,9 @@ UnivariatePolynomial<Real> gen_bern_poly(string act, Interval intv, int d)
 
     time(&end_timer);
     seconds = -difftime(start_timer, end_timer);
-    cout << "Berns generation time: " << seconds << " seconds" << endl;
+    // cout << "Berns generation time: " << seconds << " seconds" << endl;
 
-    cout << "Interval: " << intv << endl;
+    // cout << "Interval: " << intv << endl;
     cout << "bern_poly: " << bern_poly << endl;
 
     return bern_poly;

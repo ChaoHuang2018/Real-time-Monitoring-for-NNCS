@@ -392,6 +392,7 @@ void NNTaylor::get_output_tmv(TaylorModelVec<Real> &tmv_output, TaylorModelVec<R
     tmv_all_layer.push_back(tmv_input);
     for (int s = 0; s < this->nn.get_num_of_hidden_layers() + 1; s++)
     {
+        cout << "Layer " << s << " range: " << endl;
         Layer layer = this->nn.get_layers()[s];
         Matrix<Interval> weight = layer.get_weight();
         Matrix<Interval> bias = layer.get_bias();
@@ -415,18 +416,28 @@ void NNTaylor::get_output_tmv(TaylorModelVec<Real> &tmv_output, TaylorModelVec<R
         }
 
         // cout << "Layer " << s << " :" << endl;
-        time(&start_timer);
+        // time(&start_timer);
         TaylorModelVec<Real> tmv_layer_temp = weight_value * tmv_all_layer[s];
-        time(&end_timer);
-        seconds = -difftime(start_timer, end_timer);
-        cout << "Taylor model matrix mul: " << seconds << " seconds" << endl;
+        // time(&end_timer);
+        cout << "weight: " << endl;
+        cout << weight_value << endl;
+        cout << "bias: " << endl;
+        cout << bias_value << endl;
+        // seconds = -difftime(start_timer, end_timer);
+        // cout << "Taylor model matrix mul: " << seconds << " seconds" << endl;
         // cout << "11111111" << endl;
         // if (s == 3)
         // {
         //     cout << tmv_layer_temp.tms[0].expansion.terms.size() << endl;
         // }
-        cout << tmv_layer_temp.tms.size() << endl;
-        tmv_layer_temp += bias_value;
+        // cout << tmv_layer_temp.tms.size() << endl;
+
+        for (int i = 0; i < bias.rows(); i++)
+        {
+            Polynomial<Real> poly_temp(bias_value[i][0], tmv_domain.size());
+            tmv_layer_temp.tms[i].expansion += poly_temp;
+        }
+
         tmv_layer_temp.activate(tmvTemp, tmv_domain, layer.get_activation(), ti.order, ti.bernstein_order, ti.partition_num, ti.cutoff_threshold, ti.g_setting);
         tmv_layer_temp = tmvTemp;
 
@@ -440,6 +451,7 @@ void NNTaylor::get_output_tmv(TaylorModelVec<Real> &tmv_output, TaylorModelVec<R
     {
         offset[i][0] = -nn.get_offset().sup();
     }
+    // cout << "offset: " << offset << endl;
     tmv_output += offset;
 
     Matrix<Real> scalar(nn.get_num_of_outputs(), nn.get_num_of_outputs());
@@ -447,6 +459,7 @@ void NNTaylor::get_output_tmv(TaylorModelVec<Real> &tmv_output, TaylorModelVec<R
     {
         scalar[i][i] = nn.get_scale_factor().sup();
     }
+    // cout << "scalar: " << scalar << endl;
     tmv_output = scalar * tmv_output;
     // cout << "1111111111111111111111" << endl;
     tmv_all_layer.push_back(tmv_output);
@@ -462,44 +475,16 @@ void NNTaylor::NN_Reach(TaylorModelVec<Real> &tmv_output, TaylorModelVec<Real> &
 
     TaylorModelVec<Real> tmv_layer_input = tmv_input;
 
-    cout << "1111111" << endl;
-
     Flowpipe fp_layer_input(tmv_layer_input, tmv_domain, ti.cutoff_threshold);
 
-    cout << "2222222" << endl;
     Symbolic_Remainder symbolic_remainder(fp_layer_input);
 
-    cout << "3333333" << endl;
+    unsigned int numOfLayers = nn.get_num_of_hidden_layers() + 1;
 
-    unsigned int numOfLayers = nn.get_num_of_hidden_layers();
-
-    unsigned int layer_input_dim = tmv_input.tms.size();
+    unsigned int layer_input_dim = tmv_domain.size() - 1;
 
     for (unsigned int K = 0; true; ++K)
     {
-        cout << "K: " << K << endl;
-
-        Layer layer = this->nn.get_layers()[K];
-        Matrix<Interval> weight = layer.get_weight();
-        Matrix<Interval> bias = layer.get_bias();
-
-        Matrix<Real> weight_value(weight.rows(), weight.cols());
-        for (int i = 0; i < weight.rows(); i++)
-        {
-            for (int j = 0; j < weight.cols(); j++)
-            {
-                weight_value[i][j] = weight[i][j].sup();
-            }
-        }
-
-        Matrix<Real> bias_value(bias.rows(), bias.cols());
-        for (int i = 0; i < bias.rows(); i++)
-        {
-            for (int j = 0; j < bias.cols(); j++)
-            {
-                bias_value[i][j] = bias[i][j].sup();
-            }
-        }
 
         Flowpipe fp_layer_output;
 
@@ -512,6 +497,18 @@ void NNTaylor::NN_Reach(TaylorModelVec<Real> &tmv_output, TaylorModelVec<Real> &
         }
         else
         {
+            Layer layer = this->nn.get_layers()[K];
+            Matrix<Interval> weight = layer.get_weight();
+
+            Matrix<Real> weight_value(weight.rows(), weight.cols());
+            for (int i = 0; i < weight.rows(); i++)
+            {
+                for (int j = 0; j < weight.cols(); j++)
+                {
+                    weight_value[i][j] = weight[i][j].sup();
+                }
+            }
+
             tmv_of_x0 = weight_value * fp_layer_input.tmvPre;
         }
 
@@ -530,6 +527,18 @@ void NNTaylor::NN_Reach(TaylorModelVec<Real> &tmv_output, TaylorModelVec<Real> &
 
             if (K < numOfLayers)
             {
+                Layer layer = this->nn.get_layers()[K];
+                Matrix<Interval> bias = layer.get_bias();
+
+                Matrix<Real> bias_value(bias.rows(), bias.cols());
+                for (int i = 0; i < bias.rows(); i++)
+                {
+                    for (int j = 0; j < bias.cols(); j++)
+                    {
+                        bias_value[i][j] = bias[i][j].sup();
+                    }
+                }
+
                 const_of_x0[j] += bias_value[j][0];
             }
         }
@@ -546,9 +555,7 @@ void NNTaylor::NN_Reach(TaylorModelVec<Real> &tmv_output, TaylorModelVec<Real> &
         x0_linear.linearCoefficients(Phi_L_i);
 
         Matrix<Real> local_trans_linear = Phi_L_i;
-
         Phi_L_i.right_scale_assign(symbolic_remainder.scalars);
-
         // compute the remainder part under the linear transformation
         Matrix<Interval> J_i(rangeDim, 1);
 
@@ -571,6 +578,8 @@ void NNTaylor::NN_Reach(TaylorModelVec<Real> &tmv_output, TaylorModelVec<Real> &
         // compute the local initial set
         if (symbolic_remainder.J.size() > 0)
         {
+            cout << symbolic_remainder.Phi_L[0].cols() << endl;
+            cout << symbolic_remainder.polynomial_of_initial_set.size() << endl;
             // compute the polynomial part under the linear transformation
             std::vector<Polynomial<Real>> initial_linear = symbolic_remainder.Phi_L[0] * symbolic_remainder.polynomial_of_initial_set;
 
@@ -664,7 +673,7 @@ void NNTaylor::NN_Reach(TaylorModelVec<Real> &tmv_output, TaylorModelVec<Real> &
 
         //		tmv_simple_layer_input.output(std::cout, stateVars, tmVars);
         //		std::cout << std::endl << std::endl;
-
+        Layer layer = this->nn.get_layers()[K];
         tmv_simple_layer_input.activate(fp_layer_output.tmvPre, newDomain, layer.get_activation(), ti.order, ti.bernstein_order, ti.partition_num, ti.cutoff_threshold, ti.g_setting);
 
         //		tmv_simple_layer_output.output(std::cout, stateVars, tmVars);
@@ -673,15 +682,22 @@ void NNTaylor::NN_Reach(TaylorModelVec<Real> &tmv_output, TaylorModelVec<Real> &
         fp_layer_input.tmv = fp_layer_output.tmv;
         fp_layer_input.tmvPre = fp_layer_output.tmvPre;
 
-        layer_input_dim = weight_value.rows();
+        layer_input_dim = layer.get_neuron_number_this_layer();
     }
+
+    cout << tmv_output.tms.size() << endl;
 
     Matrix<Real> offset(nn.get_num_of_outputs(), 1);
     for (int i = 0; i < nn.get_num_of_outputs(); i++)
     {
         offset[i][0] = -nn.get_offset().sup();
     }
+    cout << "88888888" << endl;
+    cout << tmv_output.tms.size() << endl;
+    cout << offset.rows() << endl;
+
     tmv_output += offset;
+    cout << "99999999" << endl;
 
     Matrix<Real> scalar(nn.get_num_of_outputs(), nn.get_num_of_outputs());
     for (int i = 0; i < nn.get_num_of_outputs(); i++)

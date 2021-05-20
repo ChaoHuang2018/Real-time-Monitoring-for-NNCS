@@ -2320,8 +2320,8 @@ namespace flowstar
 		}
 		time(&end_timer);
 		seconds = -difftime(start_timer, end_timer);
-		cout << "Activation Abstraction Time: " << seconds << " seconds" << endl
-			 << endl;
+		//cout << "Activation Abstraction Time: " << seconds << " seconds" << endl
+		//	 << endl;
 		result = tmTemp;
 	}
 
@@ -2361,6 +2361,8 @@ namespace flowstar
 		Interval tmRange;
 		this->intEval(tmRange, domain);
 
+		cout << "tmRange: " << tmRange << endl;
+
 		time(&start_timer);
 		UnivariatePolynomial<Real> up = gen_bern_poly("sigmoid", tmRange, bernstein_order);
 
@@ -2392,9 +2394,9 @@ namespace flowstar
 		TaylorModel<Real> tmTemp2;
 		tmTemp1.exp_taylor(tmTemp2, domain, taylor_order, cutoff_threshold, setting);
 
-		cout << "tmTemp2: " << tmTemp2.expansion.terms.size() << endl;
+		// cout << "tmTemp2: " << tmTemp2.expansion.terms.size() << endl;
 		tmTemp2 += 1;
-		cout << "tmTemp2+1: " << tmTemp2.expansion.terms.size() << endl;
+		// cout << "tmTemp2+1: " << tmTemp2.expansion.terms.size() << endl;
 
 		TaylorModel<Real> result_taylor;
 		tmTemp2.rec_taylor(result_taylor, domain, taylor_order, cutoff_threshold, setting);
@@ -2452,7 +2454,7 @@ namespace flowstar
 			TaylorModel<Real> tmTemp1 = (*this) * (2);
 			TaylorModel<Real> tmTemp2;
 			tmTemp1.exp_taylor(tmTemp2, domain, taylor_order, cutoff_threshold, setting);
-			cout << "11111111" << endl;
+			// cout << "11111111" << endl;
 			if (tmTemp2.expansion.terms.size() == 0)
 			{
 				tmTemp2.expansion.terms.push_back(Real(0));
@@ -2463,10 +2465,10 @@ namespace flowstar
 
 			TaylorModel<Real> tmTemp3;
 			tmTemp2.rec_taylor(tmTemp3, domain, taylor_order, cutoff_threshold, setting);
-			cout << "22222222" << endl;
+			// cout << "22222222" << endl;
 			TaylorModel<Real> tmTemp4 = tmTemp3 * (-2);
 			tmTemp4 += 1;
-			cout << "33333333" << endl;
+			// cout << "33333333" << endl;
 
 			result_taylor = tmTemp4;
 		}
@@ -3777,10 +3779,10 @@ void TaylorModelVec<DATA_TYPE>::cutoff_normal(Matrix<Interval> & M, const std::v
 	void TaylorModelVec<DATA_TYPE>::normalize(std::vector<Interval> &domain, const Interval &cutoff_threshold)
 	{
 		unsigned int domainDim = domain.size();
-		unsigned int rangeDim = tms.size();
+		// unsigned int rangeDim = tms.size();
 
 		// compute the center of the original domain and make it origin-centered
-		std::vector<Real> center(rangeDim);
+		std::vector<Real> center(domainDim - 1);
 		for (unsigned int i = 1; i < domainDim; ++i) // we omit the time dimension
 		{
 			Real c;
@@ -3789,7 +3791,7 @@ void TaylorModelVec<DATA_TYPE>::cutoff_normal(Matrix<Interval> & M, const std::v
 		}
 
 		// compute the scalars
-		Matrix<DATA_TYPE> coefficients(rangeDim, domainDim);
+		Matrix<DATA_TYPE> coefficients(domainDim - 1, domainDim);
 
 		for (unsigned int i = 1; i < domainDim; ++i)
 		{
@@ -3799,7 +3801,7 @@ void TaylorModelVec<DATA_TYPE>::cutoff_normal(Matrix<Interval> & M, const std::v
 		}
 
 		TaylorModelVec<DATA_TYPE> newVars(coefficients);
-		for (unsigned int i = 0; i < rangeDim; ++i)
+		for (unsigned int i = 0; i < domainDim - 1; ++i)
 		{
 			TaylorModel<DATA_TYPE> tmTemp(center[i], domainDim);
 			newVars.tms[i] += tmTemp;
@@ -3977,6 +3979,8 @@ void TaylorModelVec<DATA_TYPE>::cutoff_normal(Matrix<Interval> & M, const std::v
 
 		for (unsigned int i = 0; i < tms.size(); ++i)
 		{
+			cout << "------"
+				 << "Neuron " << i << " -------" << endl;
 			TaylorModel<DATA_TYPE> tmTemp;
 			tms[i].activate(tmTemp, domain, activation_type, taylor_order, bernstein_order, partition_num, cutoff_threshold, setting);
 			result.tms.push_back(tmTemp);

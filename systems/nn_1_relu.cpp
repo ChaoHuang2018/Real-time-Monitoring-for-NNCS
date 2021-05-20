@@ -82,7 +82,7 @@ int main(int argc, char *argv[])
 	Result_of_Reachability result;
 
 	// define the neural network controller
-	string nn_name = "systems_with_networks/Benchmark1/nn_1_relu";
+	string nn_name = "systems_with_networks/reachnn_benchmark_1/nn_1_relu";
 	NeuralNetwork nn(nn_name);
 
 	unsigned int maxOrder = 15;
@@ -91,9 +91,11 @@ int main(int argc, char *argv[])
 
 	// the order in use
 	// unsigned int order = 5;
-	Interval cutoff_threshold(-1e-12, 1e-12);
+	Interval cutoff_threshold(-1e-10, 1e-10);
 	unsigned int bernstein_order = stoi(argv[3]);
 	unsigned int partition_num = 4000;
+
+	unsigned int if_symbo = stoi(argv[5]);
 
 	double err_max = 0;
 	time_t start_timer;
@@ -125,7 +127,15 @@ int main(int argc, char *argv[])
 		NNTaylor nn_taylor(nn);
 		TaylorInfo ti(g_setting, order, bernstein_order, partition_num, cutoff_threshold);
 		TaylorModelVec<Real> tmv_output;
-		nn_taylor.get_output_tmv(tmv_output, tmv_input, ti, initial_set.domain);
+		if (if_symbo == 0)
+		{
+			nn_taylor.get_output_tmv(tmv_output, tmv_input, ti, initial_set.domain);
+		}
+		else
+		{
+			cout << "symbolic remainder starts." << endl;
+			nn_taylor.NN_Reach(tmv_output, tmv_input, ti, initial_set.domain);
+		}
 		// cout << "initial_set.domain: " << initial_set.domain[0] << initial_set.domain[1] << endl;
 		Matrix<Interval> rm1(1, 1);
 		tmv_output.Remainder(rm1);

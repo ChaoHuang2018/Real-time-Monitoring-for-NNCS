@@ -37,7 +37,7 @@ int main(int argc, char *argv[])
 	unsigned int order = stoi(argv[4]);
 
 	// stepsize and order for reachability analysis
-	setting.setFixedStepsize(0.01, order);
+	setting.setFixedStepsize(0.05, order);
 	// setting.setAdaptiveStepsize(0.001, 0.2, order);
 
 	// time horizon for a single control step
@@ -83,7 +83,7 @@ int main(int argc, char *argv[])
 	Result_of_Reachability result;
 
 	// define the neural network controller
-	string nn_name = "systems_with_networks/Benchmark1/nn_1_tanh_reachnn";
+	string nn_name = "systems_with_networks/reachnn_benchmark_1/nn_1_tanh";
 	NeuralNetwork nn(nn_name);
 
 	unsigned int maxOrder = 15;
