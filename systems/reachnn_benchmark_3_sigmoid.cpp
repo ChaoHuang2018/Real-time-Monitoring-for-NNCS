@@ -95,6 +95,8 @@ int main(int argc, char *argv[])
 	unsigned int bernstein_order = stoi(argv[3]);
 	unsigned int partition_num = 4000;
 
+	unsigned int if_symbo = stoi(argv[5]);
+
 	double err_max = 0;
 	time_t start_timer;
 	time_t end_timer;
