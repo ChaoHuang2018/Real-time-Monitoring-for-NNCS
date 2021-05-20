@@ -509,6 +509,8 @@ void NNTaylor::NN_Reach(TaylorModelVec<Real> &tmv_output, TaylorModelVec<Real> &
                 }
             }
 
+            cout << weight_value << endl;
+            cout << fp_layer_input.tmvPre.tms.size() << endl;
             tmv_of_x0 = weight_value * fp_layer_input.tmvPre;
         }
 
