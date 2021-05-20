@@ -1,2 +1,2 @@
 Verification result: No(35)
-Running Time: 51.000000 seconds
+Running Time: 20.000000 seconds
