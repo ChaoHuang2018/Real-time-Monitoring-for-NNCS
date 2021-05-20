@@ -119,7 +119,9 @@ int main(int argc, char *argv[])
 	// unsigned int order = 5;
 	Interval cutoff_threshold(-1e-7, 1e-7);
 	unsigned int bernstein_order = stoi(argv[3]);
-	unsigned int partition_num = 2000;
+	unsigned int partition_num = 4000;
+
+	unsigned int if_symbo = stoi(argv[5]);
 
 	double err_max = 0;
 	time_t start_timer;
@@ -130,6 +132,19 @@ int main(int argc, char *argv[])
 	vector<string> state_vars;
 	state_vars.push_back("x0");
 	state_vars.push_back("x1");
+	state_vars.push_back("x2");
+	state_vars.push_back("x3");
+	state_vars.push_back("x4");
+	state_vars.push_back("x5");
+
+	if (if_symbo == 0)
+	{
+		cout << "High order abstraction starts." << endl;
+	}
+	else
+	{
+		cout << "High order abstraction with symbolic remainder starts." << endl;
+	}
 
 	// perform 35 control steps
 	for (int iter = 0; iter < steps; ++iter)
@@ -148,11 +163,18 @@ int main(int argc, char *argv[])
 		NNTaylor nn_taylor(nn);
 		TaylorInfo ti(g_setting, order, bernstein_order, partition_num, cutoff_threshold);
 		TaylorModelVec<Real> tmv_output;
-		nn_taylor.get_output_tmv(tmv_output, tmv_input, ti, initial_set.domain);
+		if (if_symbo == 0)
+		{
+			nn_taylor.get_output_tmv(tmv_output, tmv_input, ti, initial_set.domain);
+		}
+		else
+		{
+			nn_taylor.NN_Reach(tmv_output, tmv_input, ti, initial_set.domain);
+		}
 		// cout << "initial_set.domain: " << initial_set.domain[0] << initial_set.domain[1] << endl;
 		Matrix<Interval> rm1(nn.get_num_of_outputs(), 1);
 		tmv_output.Remainder(rm1);
-		cout << rm1 << endl;
+		cout << "Neural network taylor remainder: " << rm1 << endl;
 
 		// taylor
 		// NNTaylor nn_taylor1(nn);
@@ -226,7 +248,7 @@ int main(int argc, char *argv[])
 
 	std::string running_time = "Running Time: " + to_string(-seconds) + " seconds";
 
-	ofstream result_output("./outputs/nn_ac_sigmoid.txt");
+	ofstream result_output("./outputs/nn_ac_sigmoid_" + to_string(if_symbo) + ".txt");
 	if (result_output.is_open())
 	{
 		result_output << reach_result << endl;
@@ -234,13 +256,13 @@ int main(int argc, char *argv[])
 	}
 	// you need to create a subdir named outputs
 	// the file name is example.m and it is put in the subdir outputs
-	plot_setting.plot_2D_interval_MATLAB("nn_ac_sigmoid_x0_x1", result);
+	plot_setting.plot_2D_interval_MATLAB("nn_ac_sigmoid_x0_x1_" + to_string(if_symbo), result);
 
 	plot_setting.setOutputDims(x2_id, x3_id);
-	plot_setting.plot_2D_interval_MATLAB("nn_ac_sigmoid_x2_x3", result);
+	plot_setting.plot_2D_interval_MATLAB("nn_ac_sigmoid_x2_x3_" + to_string(if_symbo), result);
 
 	plot_setting.setOutputDims(x4_id, x5_id);
-	plot_setting.plot_2D_interval_MATLAB("nn_ac_sigmoid_x4_x5", result);
+	plot_setting.plot_2D_interval_MATLAB("nn_ac_sigmoid_x4_x5_" + to_string(if_symbo), result);
 
 	return 0;
 }

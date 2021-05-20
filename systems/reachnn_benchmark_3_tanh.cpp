@@ -95,6 +95,8 @@ int main(int argc, char *argv[])
 	unsigned int bernstein_order = stoi(argv[3]);
 	unsigned int partition_num = 4000;
 
+	unsigned int if_symbo = stoi(argv[5]);
+
 	double err_max = 0;
 	time_t start_timer;
 	time_t end_timer;
@@ -104,6 +106,15 @@ int main(int argc, char *argv[])
 	vector<string> state_vars;
 	state_vars.push_back("x0");
 	state_vars.push_back("x1");
+
+	if (if_symbo == 0)
+	{
+		cout << "High order abstraction starts." << endl;
+	}
+	else
+	{
+		cout << "High order abstraction with symbolic remainder starts." << endl;
+	}
 
 	// perform 35 control steps
 	for (int iter = 0; iter < steps; ++iter)
@@ -125,11 +136,17 @@ int main(int argc, char *argv[])
 		NNTaylor nn_taylor(nn);
 		TaylorInfo ti(g_setting, order, bernstein_order, partition_num, cutoff_threshold);
 		TaylorModelVec<Real> tmv_output;
-		nn_taylor.get_output_tmv(tmv_output, tmv_input, ti, initial_set.domain);
+		if (if_symbo == 0)
+		{
+			nn_taylor.get_output_tmv(tmv_output, tmv_input, ti, initial_set.domain);
+		}
+		else
+		{
+			nn_taylor.NN_Reach(tmv_output, tmv_input, ti, initial_set.domain);
+		}
 		// cout << "initial_set.domain: " << initial_set.domain[0] << initial_set.domain[1] << endl;
 		Matrix<Interval> rm1(1, 1);
 		tmv_output.Remainder(rm1);
-		cout << rm1 << endl;
 		cout << "Neural network taylor remainder: " << rm1 << endl;
 
 		// taylor
@@ -219,7 +236,7 @@ int main(int argc, char *argv[])
 
 	std::string running_time = "Running Time: " + to_string(-seconds) + " seconds";
 
-	ofstream result_output("./outputs/reachnn_benchmark_3_tanh.txt");
+	ofstream result_output("./outputs/reachnn_benchmark_3_tanh_" + to_string(if_symbo) + ".txt");
 	if (result_output.is_open())
 	{
 		result_output << reach_result << endl;
@@ -227,7 +244,7 @@ int main(int argc, char *argv[])
 	}
 	// you need to create a subdir named outputs
 	// the file name is example.m and it is put in the subdir outputs
-	plot_setting.plot_2D_interval_MATLAB("reachnn_benchmark_3_tanh", result);
+	plot_setting.plot_2D_interval_MATLAB("reachnn_benchmark_3_tanh_" + to_string(if_symbo), result);
 
 	return 0;
 }

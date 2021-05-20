@@ -130,7 +130,7 @@ UnivariatePolynomial<Real> gen_bern_poly(string act, Interval intv, int d)
     double seconds;
     time(&start_timer);
 
-    cout << "intv: " << intv << endl;
+    cout << "Interval of activation abstraction: " << intv << endl;
 
     double a = intv.inf();
     double b = intv.sup();
@@ -326,7 +326,7 @@ double gen_bern_err_by_sample(UnivariatePolynomial<Real> berns, string act, Inte
             sample_diff = temp_diff;
         }
     }
-    cout << "Interval: " << intv << endl;
+
     cout << "sample diff: " << sample_diff << endl;
 
     double total_berns_time = 0.0;
@@ -336,14 +336,14 @@ double gen_bern_err_by_sample(UnivariatePolynomial<Real> berns, string act, Inte
         total_berns_time += berns_time[i];
         total_act_time += act_time[i];
     }
-    cout << "average berns evaluation time: " << total_berns_time / (partition * 1.0) << " seconds" << endl;
-    cout << "average activation evaluation time: " << total_act_time / (partition * 1.0) << " seconds" << endl;
+    // cout << "average berns evaluation time: " << total_berns_time / (partition * 1.0) << " seconds" << endl;
+    // cout << "average activation evaluation time: " << total_act_time / (partition * 1.0) << " seconds" << endl;
 
     double overhead = 1.0 * lips * intv.width() / partition;
 
     time(&end_timer);
     seconds = -difftime(start_timer0, end_timer);
-    cout << "Berns err time: " << seconds << " seconds" << endl;
+    // cout << "Berns err time: " << seconds << " seconds" << endl;
 
     return overhead + sample_diff;
 }
