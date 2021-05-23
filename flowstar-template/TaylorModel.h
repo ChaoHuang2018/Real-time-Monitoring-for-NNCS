@@ -352,12 +352,12 @@ namespace flowstar
 		void sqrt_taylor(TaylorModel<DATA_TYPE> &result, const std::vector<Interval> &domain, const unsigned int order, const Interval &cutoff_threshold, const Global_Computation_Setting &setting) const;
 
 		// for neural networks
-		void activate(TaylorModel<DATA_TYPE> &result, const std::vector<Interval> &domain, const std::string &activation_type, const unsigned int taylor_order, const unsigned int bernstein_order, const unsigned int partition_num, const Interval &cutoff_threshold, const Global_Computation_Setting &setting) const;
+		void activate(TaylorModel<DATA_TYPE> &result, const std::vector<Interval> &domain, const std::string &activation_type, const unsigned int taylor_order, const unsigned int bernstein_order, const unsigned int partition_num, const Interval &cutoff_threshold, const Global_Computation_Setting &setting, int if_symb) const;
 
-		void sigmoid_taylor(TaylorModel<DATA_TYPE> &result, const std::vector<Interval> &domain, const unsigned int taylor_order, const unsigned int bernstein_order, const unsigned int partition_num, const Interval &cutoff_threshold, const Global_Computation_Setting &setting) const;
-		void tanh_taylor(TaylorModel<DATA_TYPE> &result, const std::vector<Interval> &domain, const unsigned int taylor_order, const unsigned int bernstein_order, const unsigned int partition_num, const Interval &cutoff_threshold, const Global_Computation_Setting &setting) const;
-		void relu_taylor(TaylorModel<DATA_TYPE> &result, const std::vector<Interval> &domain, const unsigned int taylor_order, const unsigned int bernstein_order, const unsigned int partition_num, const Interval &cutoff_threshold, const Global_Computation_Setting &setting) const;
-		void affine_taylor(TaylorModel<DATA_TYPE> &result, const std::vector<Interval> &domain, const unsigned int taylor_order, const unsigned int bernstein_order, const unsigned int partition_num, const Interval &cutoff_threshold, const Global_Computation_Setting &setting) const;
+		void sigmoid_taylor(TaylorModel<DATA_TYPE> &result, const std::vector<Interval> &domain, const unsigned int taylor_order, const unsigned int bernstein_order, const unsigned int partition_num, const Interval &cutoff_threshold, const Global_Computation_Setting &setting, int if_symb) const;
+		void tanh_taylor(TaylorModel<DATA_TYPE> &result, const std::vector<Interval> &domain, const unsigned int taylor_order, const unsigned int bernstein_order, const unsigned int partition_num, const Interval &cutoff_threshold, const Global_Computation_Setting &setting, int if_symb) const;
+		void relu_taylor(TaylorModel<DATA_TYPE> &result, const std::vector<Interval> &domain, const unsigned int taylor_order, const unsigned int bernstein_order, const unsigned int partition_num, const Interval &cutoff_threshold, const Global_Computation_Setting &setting, int if_symb) const;
+		void affine_taylor(TaylorModel<DATA_TYPE> &result, const std::vector<Interval> &domain, const unsigned int taylor_order, const unsigned int bernstein_order, const unsigned int partition_num, const Interval &cutoff_threshold, const Global_Computation_Setting &setting, int if_symb) const;
 
 		/*
 	void exp_taylor(TaylorModel & result, const std::vector<Interval> & step_exp_table, const int numVars, const int order, const Interval & cutoff_threshold) const;
@@ -2288,7 +2288,7 @@ namespace flowstar
 	}
 
 	template <class DATA_TYPE>
-	inline void TaylorModel<DATA_TYPE>::activate(TaylorModel<DATA_TYPE> &result, const std::vector<Interval> &domain, const std::string &activation_type, const unsigned int taylor_order, const unsigned int bernstein_order, const unsigned int partition_num, const Interval &cutoff_threshold, const Global_Computation_Setting &setting) const
+	inline void TaylorModel<DATA_TYPE>::activate(TaylorModel<DATA_TYPE> &result, const std::vector<Interval> &domain, const std::string &activation_type, const unsigned int taylor_order, const unsigned int bernstein_order, const unsigned int partition_num, const Interval &cutoff_threshold, const Global_Computation_Setting &setting, int if_symb) const
 	{
 		time_t start_timer;
 		time_t end_timer;
@@ -2300,19 +2300,19 @@ namespace flowstar
 		time(&start_timer);
 		if (activation_type == "sigmoid")
 		{
-			this->sigmoid_taylor(tmTemp, domain, taylor_order, bernstein_order, partition_num, cutoff_threshold, setting);
+			this->sigmoid_taylor(tmTemp, domain, taylor_order, bernstein_order, partition_num, cutoff_threshold, setting, if_symb);
 		}
 		else if (activation_type == "tanh")
 		{
-			this->tanh_taylor(tmTemp, domain, taylor_order, bernstein_order, partition_num, cutoff_threshold, setting);
+			this->tanh_taylor(tmTemp, domain, taylor_order, bernstein_order, partition_num, cutoff_threshold, setting, if_symb);
 		}
 		else if (activation_type == "ReLU")
 		{
-			this->relu_taylor(tmTemp, domain, taylor_order, bernstein_order, partition_num, cutoff_threshold, setting);
+			this->relu_taylor(tmTemp, domain, taylor_order, bernstein_order, partition_num, cutoff_threshold, setting, if_symb);
 		}
 		else if (activation_type == "Affine")
 		{
-			this->affine_taylor(tmTemp, domain, taylor_order, bernstein_order, partition_num, cutoff_threshold, setting);
+			this->affine_taylor(tmTemp, domain, taylor_order, bernstein_order, partition_num, cutoff_threshold, setting, if_symb);
 		}
 		else
 		{
@@ -2326,7 +2326,7 @@ namespace flowstar
 	}
 
 	template <>
-	inline void TaylorModel<Real>::relu_taylor(TaylorModel<Real> &result, const std::vector<Interval> &domain, const unsigned int taylor_order, const unsigned int bernstein_order, const unsigned int partition_num, const Interval &cutoff_threshold, const Global_Computation_Setting &setting) const
+	inline void TaylorModel<Real>::relu_taylor(TaylorModel<Real> &result, const std::vector<Interval> &domain, const unsigned int taylor_order, const unsigned int bernstein_order, const unsigned int partition_num, const Interval &cutoff_threshold, const Global_Computation_Setting &setting, int if_symb) const
 	{
 		Interval tmRange;
 		this->intEval(tmRange, domain);
@@ -2352,7 +2352,7 @@ namespace flowstar
 	}
 
 	template <>
-	inline void TaylorModel<Real>::sigmoid_taylor(TaylorModel<Real> &result, const std::vector<Interval> &domain, const unsigned int taylor_order, const unsigned int bernstein_order, const unsigned int partition_num, const Interval &cutoff_threshold, const Global_Computation_Setting &setting) const
+	inline void TaylorModel<Real>::sigmoid_taylor(TaylorModel<Real> &result, const std::vector<Interval> &domain, const unsigned int taylor_order, const unsigned int bernstein_order, const unsigned int partition_num, const Interval &cutoff_threshold, const Global_Computation_Setting &setting, int if_symb) const
 	{
 		time_t start_timer;
 		time_t end_timer;
@@ -2405,20 +2405,31 @@ namespace flowstar
 		seconds = -difftime(start_timer, end_timer);
 		// cout << "Taylor time: " << seconds << " seconds" << endl;
 
-		if (result_berns.remainder.width() < result_taylor.remainder.width())
+		if (if_symb == 0)
 		{
 			result = result_berns;
-			cout << "Berns" << endl;
+		}
+		else if (if_symb == 1)
+		{
+			result = result_taylor;
 		}
 		else
 		{
-			result = result_taylor;
-			cout << "Taylor" << endl;
+			if (result_berns.remainder.width() < result_taylor.remainder.width())
+			{
+				result = result_berns;
+				cout << "Berns" << endl;
+			}
+			else
+			{
+				result = result_taylor;
+				cout << "Taylor" << endl;
+			}
 		}
 	}
 
 	template <>
-	inline void TaylorModel<Real>::tanh_taylor(TaylorModel<Real> &result, const std::vector<Interval> &domain, const unsigned int taylor_order, const unsigned int bernstein_order, const unsigned int partition_num, const Interval &cutoff_threshold, const Global_Computation_Setting &setting) const
+	inline void TaylorModel<Real>::tanh_taylor(TaylorModel<Real> &result, const std::vector<Interval> &domain, const unsigned int taylor_order, const unsigned int bernstein_order, const unsigned int partition_num, const Interval &cutoff_threshold, const Global_Computation_Setting &setting, int if_symb) const
 	{
 		// for berns
 		Interval tmRange;
@@ -2495,21 +2506,31 @@ namespace flowstar
 		}
 
 		// result = result_taylor;
-		if (result_berns.remainder.width() < result_taylor.remainder.width())
-		// if (false)
+		if (if_symb == 0)
 		{
 			result = result_berns;
-			cout << "Berns" << endl;
+		}
+		else if (if_symb == 1)
+		{
+			result = result_taylor;
 		}
 		else
 		{
-			result = result_taylor;
-			cout << "Taylor" << endl;
+			if (result_berns.remainder.width() < result_taylor.remainder.width())
+			{
+				result = result_berns;
+				cout << "Berns" << endl;
+			}
+			else
+			{
+				result = result_taylor;
+				cout << "Taylor" << endl;
+			}
 		}
 	}
 
 	template <>
-	inline void TaylorModel<Real>::affine_taylor(TaylorModel<Real> &result, const std::vector<Interval> &domain, const unsigned int taylor_order, const unsigned int bernstein_order, const unsigned int partition_num, const Interval &cutoff_threshold, const Global_Computation_Setting &setting) const
+	inline void TaylorModel<Real>::affine_taylor(TaylorModel<Real> &result, const std::vector<Interval> &domain, const unsigned int taylor_order, const unsigned int bernstein_order, const unsigned int partition_num, const Interval &cutoff_threshold, const Global_Computation_Setting &setting, int if_symb) const
 	{
 		vector<Real> coe;
 		coe.push_back(Real(0.0));
@@ -2785,7 +2806,7 @@ namespace flowstar
 		void get_samples(Matrix<DATA_TYPE> &samples) const;
 
 		// component-wise sigmoid function for neural networks
-		void activate(TaylorModelVec<DATA_TYPE> &result, const std::vector<Interval> &domain, const std::string &activation_type, const unsigned int taylor_order, const unsigned int bernstein_order, const unsigned int partition_num, const Interval &cutoff_threshold, const Global_Computation_Setting &setting) const;
+		void activate(TaylorModelVec<DATA_TYPE> &result, const std::vector<Interval> &domain, const std::string &activation_type, const unsigned int taylor_order, const unsigned int bernstein_order, const unsigned int partition_num, const Interval &cutoff_threshold, const Global_Computation_Setting &setting, int if_symb) const;
 		void sigmoid_taylor(TaylorModelVec<DATA_TYPE> &result, const std::vector<Interval> &domain, const unsigned int taylor_order, const unsigned int bernstein_order, const unsigned int partition_num, const Interval &cutoff_threshold, const Global_Computation_Setting &setting) const;
 		void tanh_taylor(TaylorModelVec<DATA_TYPE> &result, const std::vector<Interval> &domain, const unsigned int order, const Interval &cutoff_threshold, const Global_Computation_Setting &setting) const;
 
@@ -3973,7 +3994,7 @@ void TaylorModelVec<DATA_TYPE>::cutoff_normal(Matrix<Interval> & M, const std::v
 	}
 
 	template <class DATA_TYPE>
-	void TaylorModelVec<DATA_TYPE>::activate(TaylorModelVec<DATA_TYPE> &result, const std::vector<Interval> &domain, const std::string &activation_type, const unsigned int taylor_order, const unsigned int bernstein_order, const unsigned int partition_num, const Interval &cutoff_threshold, const Global_Computation_Setting &setting) const
+	void TaylorModelVec<DATA_TYPE>::activate(TaylorModelVec<DATA_TYPE> &result, const std::vector<Interval> &domain, const std::string &activation_type, const unsigned int taylor_order, const unsigned int bernstein_order, const unsigned int partition_num, const Interval &cutoff_threshold, const Global_Computation_Setting &setting, int if_symb) const
 	{
 		result.clear();
 
@@ -3982,7 +4003,7 @@ void TaylorModelVec<DATA_TYPE>::cutoff_normal(Matrix<Interval> & M, const std::v
 			cout << "------"
 				 << "Neuron " << i << " -------" << endl;
 			TaylorModel<DATA_TYPE> tmTemp;
-			tms[i].activate(tmTemp, domain, activation_type, taylor_order, bernstein_order, partition_num, cutoff_threshold, setting);
+			tms[i].activate(tmTemp, domain, activation_type, taylor_order, bernstein_order, partition_num, cutoff_threshold, setting, if_symb);
 			result.tms.push_back(tmTemp);
 		}
 	}

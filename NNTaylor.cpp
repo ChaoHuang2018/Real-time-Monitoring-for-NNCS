@@ -438,7 +438,7 @@ void NNTaylor::get_output_tmv(TaylorModelVec<Real> &tmv_output, TaylorModelVec<R
             tmv_layer_temp.tms[i].expansion += poly_temp;
         }
 
-        tmv_layer_temp.activate(tmvTemp, tmv_domain, layer.get_activation(), ti.order, ti.bernstein_order, ti.partition_num, ti.cutoff_threshold, ti.g_setting);
+        tmv_layer_temp.activate(tmvTemp, tmv_domain, layer.get_activation(), ti.order, ti.bernstein_order, ti.partition_num, ti.cutoff_threshold, ti.g_setting, 3);
         tmv_layer_temp = tmvTemp;
 
         tmv_all_layer.push_back(tmv_layer_temp);
@@ -676,7 +676,7 @@ void NNTaylor::NN_Reach(TaylorModelVec<Real> &tmv_output, TaylorModelVec<Real> &
         //		tmv_simple_layer_input.output(std::cout, stateVars, tmVars);
         //		std::cout << std::endl << std::endl;
         Layer layer = this->nn.get_layers()[K];
-        tmv_simple_layer_input.activate(fp_layer_output.tmvPre, newDomain, layer.get_activation(), ti.order, ti.bernstein_order, ti.partition_num, ti.cutoff_threshold, ti.g_setting);
+        tmv_simple_layer_input.activate(fp_layer_output.tmvPre, newDomain, layer.get_activation(), ti.order, ti.bernstein_order, ti.partition_num, ti.cutoff_threshold, ti.g_setting, 1);
 
         //		tmv_simple_layer_output.output(std::cout, stateVars, tmVars);
         //		std::cout << std::endl << std::endl;

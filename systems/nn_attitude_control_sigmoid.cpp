@@ -27,12 +27,12 @@ int main(int argc, char *argv[])
 	int domainDim = numVars + 1;
 
 	// Define the continuous dynamics.
-	Expression_AST<Real> deriv_x0("u0/4 + (x2*x4)/4"); // theta_r = 0
-	Expression_AST<Real> deriv_x1("u1/2 - (3*x0*x4)/2");
-	Expression_AST<Real> deriv_x2("u2 + 2*x0*x2");
-	Expression_AST<Real> deriv_x3("x2*(x3/2 + (x1*x5)/2) - x2*(x5/2 - (x1*x3)/2) + x0*(x1^2/2 + 1/2)");
-	Expression_AST<Real> deriv_x4("x0*(x5/2 + (x1*x3)/2) - x4*(x1/2 - (x3*x5)/2) + x2*(x3^2/2 + 1/2)");
-	Expression_AST<Real> deriv_x5("x1*(x1/2 + (x3*x5)/2) - x0*(x3/2 - (x1*x5)/2) + x4*(x5^2/2 + 1/2)");
+	Expression_AST<Real> deriv_x0("u0/4 + (x1*x2)/4"); // theta_r = 0
+	Expression_AST<Real> deriv_x1("u1/2 - (3*x0*x2)/2");
+	Expression_AST<Real> deriv_x2("u2 + 2*x0*x1");
+	Expression_AST<Real> deriv_x3("x1*(x3^2/2 + x4^2/2 + x5^2/2 - x5/2) + x2*(x3^2/2 + x4^2/2 + x4/2 + x5^2/2) + x0*(x3^2/2 + x4^2/2 + x5^2/2 + 1/2)");
+	Expression_AST<Real> deriv_x4("x0*(x3^2/2 + x4^2/2 + x5^2/2 + x5/2) + x2*(x3^2/2 - x3/2 + x4^2/2 + x5^2/2) + x1*(x3^2/2 + x4^2/2 + x5^2/2 + 1/2)");
+	Expression_AST<Real> deriv_x5("x0*(x3^2/2 + x4^2/2 - x4/2 + x5^2/2) + x1*(x3^2/2 + x3/2 + x4^2/2 + x5^2/2) + x2*(x3^2/2 + x4^2/2 + x5^2/2 + 1/2)");
 	Expression_AST<Real> deriv_u0("0");
 	Expression_AST<Real> deriv_u1("0");
 	Expression_AST<Real> deriv_u2("0");

@@ -1,9 +1,9 @@
 % plot( [-0.05, 0.05, 0.05, -0.05, -0.05] , [-0.05,-0.05,0.2,0.2,-0.05] , 'color' , [72/255 130/255 197/255], 'LineWidth', 2.0);
 % hold on;
 clear;
-Ts = 0.02;  % Sample Time
+Ts = 0.5;  % Sample Time
 N = 5;    % Prediction horizon
-Duration = 1.0; % Simulation horizon
+Duration = 20.0; % Simulation horizon
 number = 100;
 
 % For a usual control 0.1 , 5, 20
@@ -26,12 +26,12 @@ for m=1:number
 % Setting the initial state
 disp(num2str(m) + "-th simulation starts: ")
 
-x0 = 0.09 + 0.02*rand(1);
-x1 = - 0.21 + 0.02*rand(1);
-x2 = - 0.21 + 0.02*rand(1);
-x3 = 0.29 + 0.02*rand(1);
-x4 = 0.04 + 0.02*rand(1);
-x5 = - 0.01 + 0.02*rand(1);
+x0 = - 0.5 + 0.1*rand(1);
+x1 = - 0.6 + 0.1*rand(1);
+x2 = 0.6 + 0.1*rand(1);
+x3 = - 0.8 + 0.1*rand(1);
+x4 = 0.8 + 0.1*rand(1);
+x5 = - 0.7 + 0.1*rand(1);
 
 x = [x0;x1;x2;x3;x4;x5];
 
@@ -57,11 +57,18 @@ x_now = x;
 trace = [x_now];
 for ct = 1:(Duration/Ts)
     
-     u = NN_output(x_now,'CLF_controller_layer_num_3');
-    % disp(u);
+     %u1 = NN_output(x_now,'CLF_controller_layer_num_3');
+     u2 = MBC_output(x_now);
+     %disp("u1");
+     %disp(u1);
+     %disp("u2");
+     %disp(u2);
       
 %     x_next = system_eq_NN(x_now, Ts, u);
-      x_next = system_eq_dis(x_now, Ts, u);
+      x_next = system_eq_dis(x_now, Ts, u2);
+      
+      plot(ct, u2(3), 'o', 'color', [1, 0, 0]);
+      hold on;
 
       x = x_next;
       x_now = x_next;
@@ -83,7 +90,8 @@ end
 % fclose(file);
 
 % figure;
-plot(simulation_result(5,:),simulation_result(6,:), 'color', [210/255, 95/255, 95/255]);
+% plot(simulation_result(5,:),simulation_result(6,:), 'color', [210/255, 95/255, 95/255]);
+
 % title('Benchmark 1 (sigmoid)', 'FontSize', 14)
 % xlabel('x1', 'FontSize', 14);
 % ylabel('x2', 'FontSize', 14);

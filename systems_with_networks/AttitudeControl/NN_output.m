@@ -4,7 +4,7 @@ function [y] =  NN_output(x,name)
 fid = fopen(name,'r');
 tline = fgetl(fid);
 no_of_inputs = str2num(tline);
-%disp(size(no_of_inputs));
+%disp(no_of_inputs);
 
 tline = fgetl(fid);
 no_of_outputs = str2num(tline);
@@ -46,8 +46,9 @@ end
 % disp(weight_matrix)
 
 % Doing the input transformation
-g = zeros(no_of_inputs,1);
 g = x;
+% disp(size(weight_matrix))
+% disp(size(g))
 g = weight_matrix * g;
 % disp(g)
 g = g + bias_matrix;
