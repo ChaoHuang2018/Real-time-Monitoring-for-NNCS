@@ -4,7 +4,7 @@ clear;
 Ts = 0.5;  % Sample Time
 N = 5;    % Prediction horizon
 Duration = 20.0; % Simulation horizon
-number = 100;
+number = 1;
 
 % For a usual control 0.1 , 5, 20
 
@@ -57,8 +57,8 @@ x_now = x;
 trace = [x_now];
 for ct = 1:(Duration/Ts)
     
-     %u1 = NN_output(x_now,'CLF_controller_layer_num_3');
-     u2 = MBC_output(x_now);
+     u2 = NN_output(x_now,'CLF_controller_layer_num_3');
+%      u2 = MBC_output(x_now);
      %disp("u1");
      %disp(u1);
      %disp("u2");
@@ -66,9 +66,6 @@ for ct = 1:(Duration/Ts)
       
 %     x_next = system_eq_NN(x_now, Ts, u);
       x_next = system_eq_dis(x_now, Ts, u2);
-      
-      plot(ct, u2(3), 'o', 'color', [1, 0, 0]);
-      hold on;
 
       x = x_next;
       x_now = x_next;
@@ -90,7 +87,7 @@ end
 % fclose(file);
 
 % figure;
-% plot(simulation_result(5,:),simulation_result(6,:), 'color', [210/255, 95/255, 95/255]);
+plot(simulation_result(5,:),simulation_result(6,:), 'color', [210/255, 95/255, 95/255]);
 
 % title('Benchmark 1 (sigmoid)', 'FontSize', 14)
 % xlabel('x1', 'FontSize', 14);
