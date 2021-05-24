@@ -4,7 +4,7 @@ clear;
 Ts = 0.5;  % Sample Time
 N = 5;    % Prediction horizon
 Duration = 20.0; % Simulation horizon
-number = 1;
+number = 100;
 
 % For a usual control 0.1 , 5, 20
 
