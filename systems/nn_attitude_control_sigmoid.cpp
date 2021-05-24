@@ -65,7 +65,7 @@ int main(int argc, char *argv[])
 	setting.setCutoffThreshold(1e-7);
 
 	// queue size for the symbolic remainder
-	setting.setQueueSize(2000);
+	setting.setQueueSize(0);
 
 	// print out the steps
 	setting.printOff();
@@ -85,7 +85,7 @@ int main(int argc, char *argv[])
 	 */
 	double w = stod(argv[1]);
 	int steps = stoi(argv[2]);
-	Interval init_x0(0.1 - w, 0.1 + w), init_x1(-0.2 - w, -0.2 + w), init_x2(-0.2 - w, -0.2 + w), init_x3(0.3 - w, 0.3 + w), init_x4(0.05 - w, 0.05 + w), init_x5(0 - w, -0 + w);
+	Interval init_x0(-0.45 - w, 0.45 + w), init_x1(-0.55 - w, -0.55 + w), init_x2(0.65 - w, 0.65 + w), init_x3(-0.75 - w, -0.75 + w), init_x4(0.85 - w, 0.85 + w), init_x5(-0.65 - w, -0.65 + w);
 	Interval init_u0(0), init_u1(0), init_u2(0);
 	std::vector<Interval> X0;
 	X0.push_back(init_x0);
