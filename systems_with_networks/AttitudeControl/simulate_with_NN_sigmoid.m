@@ -1,10 +1,10 @@
 % plot( [-0.05, 0.05, 0.05, -0.05, -0.05] , [-0.05,-0.05,0.2,0.2,-0.05] , 'color' , [72/255 130/255 197/255], 'LineWidth', 2.0);
 % hold on;
 clear;
-Ts = 0.5;  % Sample Time
+Ts = 1;  % Sample Time
 N = 5;    % Prediction horizon
 Duration = 20.0; % Simulation horizon
-number = 100;
+number = 10;
 
 % For a usual control 0.1 , 5, 20
 
@@ -57,8 +57,8 @@ x_now = x;
 trace = [x_now];
 for ct = 1:(Duration/Ts)
     
-     u2 = NN_output(x_now,'CLF_controller_layer_num_3');
-%      u2 = MBC_output(x_now);
+%      u2 = NN_output(x_now,'CLF_controller_layer_num_3');
+     u2 = MBC_output(x_now);
      %disp("u1");
      %disp(u1);
      %disp("u2");
