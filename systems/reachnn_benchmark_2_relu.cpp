@@ -244,7 +244,7 @@ int main(int argc, char *argv[])
 	}
 	// you need to create a subdir named outputs
 	// the file name is example.m and it is put in the subdir outputs
-	plot_setting.plot_2D_interval_MATLAB("reachnn_benchmark_2_relu_" + to_string(if_symbo), result);
+	plot_setting.plot_2D_octagon_MATLAB("reachnn_benchmark_2_relu_" + to_string(if_symbo), result);
 
 	return 0;
 }

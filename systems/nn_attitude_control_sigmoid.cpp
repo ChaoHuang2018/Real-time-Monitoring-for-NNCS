@@ -59,13 +59,13 @@ int main(int argc, char *argv[])
 	setting.setFixedStepsize(0.02, order);
 
 	// time horizon for a single control step
-	setting.setTime(0.5);
+	setting.setTime(0.1);
 
 	// cutoff threshold
 	setting.setCutoffThreshold(1e-7);
 
 	// queue size for the symbolic remainder
-	setting.setQueueSize(0);
+	setting.setQueueSize(2000);
 
 	// print out the steps
 	setting.printOff();
@@ -85,8 +85,8 @@ int main(int argc, char *argv[])
 	 */
 	double w = stod(argv[1]);
 	int steps = stoi(argv[2]);
-	// Interval init_x0(-0.45 - w, -0.45 + w), init_x1(-0.55 - w, -0.55 + w), init_x2(0.65 - w, 0.65 + w), init_x3(-0.75 - w, -0.75 + w), init_x4(0.85 - w, 0.85 + w), init_x5(-0.65 - w, -0.65 + w);
-	Interval init_x0(-0.25 - w, -0.25 + w), init_x1(-0.25 - w, -0.25 + w), init_x2(0.35 - w, 0.35 + w), init_x3(-0.35 - w, -0.35 + w), init_x4(0.45 - w, 0.45 + w), init_x5(-0.35 - w, -0.35 + w);
+	Interval init_x0(-0.45 - w, -0.45 + w), init_x1(-0.55 - w, -0.55 + w), init_x2(0.65 - w, 0.65 + w), init_x3(-0.75 - w, -0.75 + w), init_x4(0.85 - w, 0.85 + w), init_x5(-0.65 - w, -0.65 + w);
+	// Interval init_x0(-0.25 - w, -0.25 + w), init_x1(-0.25 - w, -0.25 + w), init_x2(0.35 - w, 0.35 + w), init_x3(-0.35 - w, -0.35 + w), init_x4(0.45 - w, 0.45 + w), init_x5(-0.35 - w, -0.35 + w);
 	Interval init_u0(0), init_u1(0), init_u2(0);
 	std::vector<Interval> X0;
 	X0.push_back(init_x0);
@@ -109,7 +109,7 @@ int main(int argc, char *argv[])
 	Result_of_Reachability result;
 
 	// define the neural network controller
-	string nn_name = "systems_with_networks/AttitudeControl/CLF_controller_layer_num_3";
+	string nn_name = "systems_with_networks/AttitudeControl/CLF_controller_layer_num_3_new";
 	NeuralNetwork nn(nn_name);
 
 	unsigned int maxOrder = 15;
@@ -257,13 +257,13 @@ int main(int argc, char *argv[])
 	}
 	// you need to create a subdir named outputs
 	// the file name is example.m and it is put in the subdir outputs
-	plot_setting.plot_2D_interval_MATLAB("nn_ac_sigmoid_x0_x1_" + to_string(if_symbo), result);
+	plot_setting.plot_2D_octagon_MATLAB("nn_ac_sigmoid_x0_x1_" + to_string(if_symbo), result);
 
 	plot_setting.setOutputDims(x2_id, x3_id);
-	plot_setting.plot_2D_interval_MATLAB("nn_ac_sigmoid_x2_x3_" + to_string(if_symbo), result);
+	plot_setting.plot_2D_octagon_MATLAB("nn_ac_sigmoid_x2_x3_" + to_string(if_symbo), result);
 
 	plot_setting.setOutputDims(x4_id, x5_id);
-	plot_setting.plot_2D_interval_MATLAB("nn_ac_sigmoid_x4_x5_" + to_string(if_symbo), result);
+	plot_setting.plot_2D_octagon_MATLAB("nn_ac_sigmoid_x4_x5_" + to_string(if_symbo), result);
 
 	return 0;
 }
