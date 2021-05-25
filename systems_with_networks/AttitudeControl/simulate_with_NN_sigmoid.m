@@ -26,12 +26,12 @@ for m=1:number
 % Setting the initial state
 disp(num2str(m) + "-th simulation starts: ")
 
-x0 = - 0.5 + 0.1*rand(1);
-x1 = - 0.6 + 0.1*rand(1);
-x2 = 0.6 + 0.1*rand(1);
-x3 = - 0.8 + 0.1*rand(1);
-x4 = 0.8 + 0.1*rand(1);
-x5 = - 0.7 + 0.1*rand(1);
+x0 = - 0.46 + 0.02*rand(1);
+x1 = - 0.56 + 0.02*rand(1);
+x2 = 0.64 + 0.02*rand(1);
+x3 = - 0.76 + 0.02*rand(1);
+x4 = 0.84 + 0.02*rand(1);
+x5 = - 0.66 + 0.02*rand(1);
 
 x = [x0;x1;x2;x3;x4;x5];
 

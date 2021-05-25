@@ -27,8 +27,8 @@ int main(int argc, char *argv[])
 	int domainDim = numVars + 1;
 
 	// Define the continuous dynamics.
-	Expression_AST<Real> deriv_x0("u0/4 + (x1*x2)/4"); // theta_r = 0
-	Expression_AST<Real> deriv_x1("u1/2 - (3*x0*x2)/2");
+	Expression_AST<Real> deriv_x0("u0/4 + x1*x2/4"); // theta_r = 0
+	Expression_AST<Real> deriv_x1("u1/2 - 3*x0*x2/2");
 	Expression_AST<Real> deriv_x2("u2 + 2*x0*x1");
 	Expression_AST<Real> deriv_x3("x1*(x3^2/2 + x4^2/2 + x5^2/2 - x5/2) + x2*(x3^2/2 + x4^2/2 + x4/2 + x5^2/2) + x0*(x3^2/2 + x4^2/2 + x5^2/2 + 1/2)");
 	Expression_AST<Real> deriv_x4("x0*(x3^2/2 + x4^2/2 + x5^2/2 + x5/2) + x2*(x3^2/2 - x3/2 + x4^2/2 + x5^2/2) + x1*(x3^2/2 + x4^2/2 + x5^2/2 + 1/2)");
@@ -56,7 +56,7 @@ int main(int argc, char *argv[])
 	unsigned int order = stoi(argv[4]);
 
 	// stepsize and order for reachability analysis
-	setting.setFixedStepsize(0.1, order);
+	setting.setFixedStepsize(0.02, order);
 
 	// time horizon for a single control step
 	setting.setTime(0.5);
@@ -85,7 +85,7 @@ int main(int argc, char *argv[])
 	 */
 	double w = stod(argv[1]);
 	int steps = stoi(argv[2]);
-	Interval init_x0(-0.45 - w, 0.45 + w), init_x1(-0.55 - w, -0.55 + w), init_x2(0.65 - w, 0.65 + w), init_x3(-0.75 - w, -0.75 + w), init_x4(0.85 - w, 0.85 + w), init_x5(-0.65 - w, -0.65 + w);
+	Interval init_x0(-0.45 - w, -0.45 + w), init_x1(-0.55 - w, -0.55 + w), init_x2(0.65 - w, 0.65 + w), init_x3(-0.75 - w, -0.75 + w), init_x4(0.85 - w, 0.85 + w), init_x5(-0.65 - w, -0.65 + w);
 	Interval init_u0(0), init_u1(0), init_u2(0);
 	std::vector<Interval> X0;
 	X0.push_back(init_x0);
