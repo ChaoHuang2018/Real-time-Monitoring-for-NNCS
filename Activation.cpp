@@ -108,7 +108,7 @@ Activation::Activation(string act, TaylorModel<Real> tm_in, TaylorInfo ti, vecto
     if (activation == "sigmoid")
     {
         TaylorModel<Real> tmTemp;
-        tm_in.sigmoid_taylor(tmTemp, tmv_domain, ti.order, ti.bernstein_order, ti.partition_num, ti.cutoff_threshold, ti.g_setting);
+        tm_in.sigmoid_taylor(tmTemp, tmv_domain, ti.order, ti.bernstein_order, ti.partition_num, ti.cutoff_threshold, ti.g_setting, 2);
         this->tm = tmTemp;
     }
 

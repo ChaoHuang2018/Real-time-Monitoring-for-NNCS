@@ -85,7 +85,8 @@ int main(int argc, char *argv[])
 	 */
 	double w = stod(argv[1]);
 	int steps = stoi(argv[2]);
-	Interval init_x0(-0.45 - w, -0.45 + w), init_x1(-0.55 - w, -0.55 + w), init_x2(0.65 - w, 0.65 + w), init_x3(-0.75 - w, -0.75 + w), init_x4(0.85 - w, 0.85 + w), init_x5(-0.65 - w, -0.65 + w);
+	// Interval init_x0(-0.45 - w, -0.45 + w), init_x1(-0.55 - w, -0.55 + w), init_x2(0.65 - w, 0.65 + w), init_x3(-0.75 - w, -0.75 + w), init_x4(0.85 - w, 0.85 + w), init_x5(-0.65 - w, -0.65 + w);
+	Interval init_x0(-0.25 - w, -0.25 + w), init_x1(-0.25 - w, -0.25 + w), init_x2(0.35 - w, 0.35 + w), init_x3(-0.35 - w, -0.35 + w), init_x4(0.45 - w, 0.45 + w), init_x5(-0.35 - w, -0.35 + w);
 	Interval init_u0(0), init_u1(0), init_u2(0);
 	std::vector<Interval> X0;
 	X0.push_back(init_x0);

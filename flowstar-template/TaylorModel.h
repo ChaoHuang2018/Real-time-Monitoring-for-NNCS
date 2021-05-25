@@ -2361,7 +2361,7 @@ namespace flowstar
 		Interval tmRange;
 		this->intEval(tmRange, domain);
 
-		cout << "tmRange: " << tmRange << endl;
+		// cout << "tmRange: " << tmRange << endl;
 
 		time(&start_timer);
 		UnivariatePolynomial<Real> up = gen_bern_poly("sigmoid", tmRange, bernstein_order);

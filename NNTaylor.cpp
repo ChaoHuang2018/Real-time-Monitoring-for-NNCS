@@ -419,10 +419,10 @@ void NNTaylor::get_output_tmv(TaylorModelVec<Real> &tmv_output, TaylorModelVec<R
         // time(&start_timer);
         TaylorModelVec<Real> tmv_layer_temp = weight_value * tmv_all_layer[s];
         // time(&end_timer);
-        cout << "weight: " << endl;
-        cout << weight_value << endl;
-        cout << "bias: " << endl;
-        cout << bias_value << endl;
+        // cout << "weight: " << endl;
+        // cout << weight_value << endl;
+        // cout << "bias: " << endl;
+        // cout << bias_value << endl;
         // seconds = -difftime(start_timer, end_timer);
         // cout << "Taylor model matrix mul: " << seconds << " seconds" << endl;
         // cout << "11111111" << endl;
@@ -509,8 +509,8 @@ void NNTaylor::NN_Reach(TaylorModelVec<Real> &tmv_output, TaylorModelVec<Real> &
                 }
             }
 
-            cout << weight_value << endl;
-            cout << fp_layer_input.tmvPre.tms.size() << endl;
+            //cout << weight_value << endl;
+            //cout << fp_layer_input.tmvPre.tms.size() << endl;
             tmv_of_x0 = weight_value * fp_layer_input.tmvPre;
         }
 
@@ -676,7 +676,7 @@ void NNTaylor::NN_Reach(TaylorModelVec<Real> &tmv_output, TaylorModelVec<Real> &
         //		tmv_simple_layer_input.output(std::cout, stateVars, tmVars);
         //		std::cout << std::endl << std::endl;
         Layer layer = this->nn.get_layers()[K];
-        tmv_simple_layer_input.activate(fp_layer_output.tmvPre, newDomain, layer.get_activation(), ti.order, ti.bernstein_order, ti.partition_num, ti.cutoff_threshold, ti.g_setting, 1);
+        tmv_simple_layer_input.activate(fp_layer_output.tmvPre, newDomain, layer.get_activation(), ti.order, ti.bernstein_order, ti.partition_num, ti.cutoff_threshold, ti.g_setting, 2);
 
         //		tmv_simple_layer_output.output(std::cout, stateVars, tmVars);
         //		std::cout << std::endl << std::endl;
@@ -694,12 +694,10 @@ void NNTaylor::NN_Reach(TaylorModelVec<Real> &tmv_output, TaylorModelVec<Real> &
     {
         offset[i][0] = -nn.get_offset().sup();
     }
-    cout << "88888888" << endl;
-    cout << tmv_output.tms.size() << endl;
-    cout << offset.rows() << endl;
+    //cout << tmv_output.tms.size() << endl;
+    //cout << offset.rows() << endl;
 
     tmv_output += offset;
-    cout << "99999999" << endl;
 
     Matrix<Real> scalar(nn.get_num_of_outputs(), nn.get_num_of_outputs());
     for (int i = 0; i < nn.get_num_of_outputs(); i++)

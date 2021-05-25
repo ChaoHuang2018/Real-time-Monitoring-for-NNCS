@@ -1,9 +1,9 @@
 % plot( [-0.05, 0.05, 0.05, -0.05, -0.05] , [-0.05,-0.05,0.2,0.2,-0.05] , 'color' , [72/255 130/255 197/255], 'LineWidth', 2.0);
 % hold on;
 clear;
-Ts = 0.5;  % Sample Time
+Ts = 0.2;  % Sample Time
 N = 5;    % Prediction horizon
-Duration = 10.0; % Simulation horizon
+Duration = 4.0; % Simulation horizon
 number = 10;
 
 % For a usual control 0.1 , 5, 20
@@ -26,12 +26,19 @@ for m=1:number
 % Setting the initial state
 disp(num2str(m) + "-th simulation starts: ")
 
-x0 = - 0.46 + 0.02*rand(1);
-x1 = - 0.56 + 0.02*rand(1);
-x2 = 0.64 + 0.02*rand(1);
-x3 = - 0.76 + 0.02*rand(1);
-x4 = 0.84 + 0.02*rand(1);
-x5 = - 0.66 + 0.02*rand(1);
+% x0 = - 0.46 + 0.02*rand(1);
+% x1 = - 0.56 + 0.02*rand(1);
+% x2 = 0.64 + 0.02*rand(1);
+% x3 = - 0.76 + 0.02*rand(1);
+% x4 = 0.84 + 0.02*rand(1);
+% x5 = - 0.66 + 0.02*rand(1);
+
+x0 = - 0.26 + 0.02*rand(1);
+x1 = - 0.26 + 0.02*rand(1);
+x2 = 0.34 + 0.02*rand(1);
+x3 = - 0.36 + 0.02*rand(1);
+x4 = 0.44 + 0.02*rand(1);
+x5 = - 0.36 + 0.02*rand(1);
 
 x = [x0;x1;x2;x3;x4;x5];
 
