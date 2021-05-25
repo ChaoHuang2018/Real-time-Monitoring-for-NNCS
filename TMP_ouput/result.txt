@@ -6,7 +6,7 @@ ex3_tanh_tmp: 77.975295
 ex3_sig_tmp: 88.579699
 ex4_tanh_tmp: 21.139251
 ex4_sig_tmp: 22.575757
-ex5_tanh_tmp: 392.280249
-ex5_sig_tmp: 426.089260
-ex6_tanh_tmp (tora): 160.987685
-ex6_sig_tmp (tora): 200.049917
+ex5_tanh_tmp: 392.280249 
+ex5_sig_tmp: 426.089260 ()
+ex6_tanh_tmp (tora): 160.987685 (differnt)
+ex6_sig_tmp (tora): 200.049917 ()

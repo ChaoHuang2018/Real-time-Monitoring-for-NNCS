@@ -1,13 +1,13 @@
-Ts = 1;  % Sample Time
+Ts = 0.5;  % Sample Time
 N = 3;    % Prediction horizon
-Duration = 17; % Simulation horizon
+Duration = 5; % Simulation horizon
 
-radius = 0.1;
+radius = 0.02;
 
 global simulation_result;
 global disturb_range;
 
-disturb_range = 0.1; % Disturbance range
+disturb_range = 0; % Disturbance range
 
 formatSpec = '%f %f %f\n';
 
@@ -16,9 +16,9 @@ fileID = fopen('nn_tora_sigmoid.txt','w');
 for m=1:100
 
     
-x0 = 0.8 + radius*rand(1);
-y0 = -0.5 + radius*rand(1);
-z0 = -0.2 + radius*rand(1);
+x0 = -0.77 + radius*rand(1);
+y0 = -0.45 + radius*rand(1);
+z0 = 0.51 + radius*rand(1);
 w0 = 0.7 + radius*rand(1);
 
 
@@ -44,7 +44,7 @@ x_now = x;
 
 for ct = 1:(Duration/Ts)
     
-     u = NN_output_sigmoid(x_now,0.5,22,'nn_tora_sigmoid');
+     u = NN_output_sigmoid(x_now,0.5,22,'nn_6_tora_sigmoid');
 
      
      z(1) = x_now(1) ;

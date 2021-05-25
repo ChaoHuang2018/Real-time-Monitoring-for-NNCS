@@ -72,7 +72,7 @@ int main(int argc, char *argv[])
 	 */
 	double w = stod(argv[1]);
 	int steps = stoi(argv[2]);
-	Interval init_x0(-0.76 - w, -0.76 + w), init_x1(-0.44 - w, -0.44 + w), init_x2(-0.52 - w, -0.53 + w), init_x3(-0.29 - w, -0.29 + w), init_u(0); //w=0.01
+	Interval init_x0(-0.76 - w, -0.76 + w), init_x1(-0.44 - w, -0.44 + w), init_x2(0.52 - w, 0.53 + w), init_x3(-0.29 - w, -0.29 + w), init_u(0); //w=0.01
 	std::vector<Interval> X0;
 	X0.push_back(init_x0);
 	X0.push_back(init_x1);
