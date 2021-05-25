@@ -37,7 +37,7 @@ int main(int argc, char *argv[])
 	unsigned int order = stoi(argv[4]);
 
 	// stepsize and order for reachability analysis
-	setting.setFixedStepsize(0.01, order);
+	setting.setFixedStepsize(0.005, order);
 
 	// time horizon for a single control step
 	setting.setTime(0.2);
@@ -244,7 +244,7 @@ int main(int argc, char *argv[])
 	}
 	// you need to create a subdir named outputs
 	// the file name is example.m and it is put in the subdir outputs
-	plot_setting.plot_2D_interval_MATLAB("reachnn_benchmark_1_sigmoid_" + to_string(if_symbo), result);
+	plot_setting.plot_2D_octagon_MATLAB("reachnn_benchmark_1_sigmoid_" + to_string(if_symbo), result);
 
 	return 0;
 }
