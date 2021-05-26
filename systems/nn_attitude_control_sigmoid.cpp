@@ -56,7 +56,7 @@ int main(int argc, char *argv[])
 	unsigned int order = stoi(argv[4]);
 
 	// stepsize and order for reachability analysis
-	setting.setFixedStepsize(0.02, order);
+	setting.setFixedStepsize(0.005, order);
 
 	// time horizon for a single control step
 	setting.setTime(0.1);
@@ -85,7 +85,7 @@ int main(int argc, char *argv[])
 	 */
 	double w = stod(argv[1]);
 	int steps = stoi(argv[2]);
-	Interval init_x0(-0.45 - w, -0.45 + w), init_x1(-0.55 - w, -0.55 + w), init_x2(0.65 - w, 0.65 + w), init_x3(-0.75 - w, -0.75 + w), init_x4(0.85 - w, 0.85 + w), init_x5(-0.65 - w, -0.65 + w);
+	Interval init_x0(-0.445 - w, -0.445 + w), init_x1(-0.545 - w, -0.545 + w), init_x2(0.655 - w, 0.655 + w), init_x3(-0.745 - w, -0.745 + w), init_x4(0.855 - w, 0.855 + w), init_x5(-0.645 - w, -0.645 + w);
 	// Interval init_x0(-0.25 - w, -0.25 + w), init_x1(-0.25 - w, -0.25 + w), init_x2(0.35 - w, 0.35 + w), init_x3(-0.35 - w, -0.35 + w), init_x4(0.45 - w, 0.45 + w), init_x5(-0.35 - w, -0.35 + w);
 	Interval init_u0(0), init_u1(0), init_u2(0);
 	std::vector<Interval> X0;

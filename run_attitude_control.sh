@@ -28,4 +28,4 @@ make nn_attitude_control_sigmoid && \
     # ./benchmark6_relu_tanh 0.01 10 4 6 0 && \
     # ./benchmark6_sigmoid 0.01 10 4 6 0 && \
     # ./benchmark6_tanh 0.01 10 4 6 0
-    ./nn_attitude_control_sigmoid 0.01 60 4 4 1
+    ./nn_attitude_control_sigmoid 0.005 30 4 4 1
