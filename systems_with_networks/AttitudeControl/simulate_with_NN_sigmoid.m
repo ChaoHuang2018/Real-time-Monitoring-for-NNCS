@@ -1,10 +1,12 @@
 % plot( [-0.05, 0.05, 0.05, -0.05, -0.05] , [-0.05,-0.05,0.2,0.2,-0.05] , 'color' , [72/255 130/255 197/255], 'LineWidth', 2.0);
 % hold on;
 clear;
+nn_ac_sigmoid_x4_x5_0;
+nn_ac_sigmoid_x4_x5_1;
 Ts = 0.1;  % Sample Time
 N = 5;    % Prediction horizon
 Duration = 3.0; % Simulation horizon
-number = 10;
+number = 50;
 
 % For a usual control 0.1 , 5, 20
 
@@ -108,9 +110,8 @@ hold on;
 end
 
 % fclose(fileID);
-% fig = gcf;
-% fig.PaperPositionMode = 'auto';
-% fig_pos = fig.PaperPosition;
-% fig.PaperSize = [fig_pos(3) fig_pos(4)];
-% print(fig,'../Benchmarks/benchmark1_sigmoid','-dpdf')
-% export_fig ../Benchmarks/benchmark1_sigmoid.pdf
+fig = gcf;
+fig.PaperPositionMode = 'auto';
+fig_pos = fig.PaperPosition;
+fig.PaperSize = [fig_pos(3) fig_pos(4)];
+print(fig,'../../outputs/Benchmarks_symbolic/attitude_control_benchmark_sigmoid','-dpdf')
