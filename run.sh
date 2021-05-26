@@ -7,7 +7,7 @@ make && \
     ./benchmark2_relu 0.1 10 4 6 0 && \
     ./benchmark2_relu_tanh 0.1 10 4 6 0 && \
     ./benchmark2_sigmoid 0.1 10 4 6 0 && \
-    ./benchmark2_tanh 0.1 10 4 6 0 && \
+    ./benchmark2_tanh 0.1 7 4 6 0 && \
 
     ./benchmark3_relu 0.05 60 4 6 0 && \
     ./benchmark3_relu_sigmoid 0.05 60 4 6 0 && \
