@@ -37,7 +37,8 @@ int main(int argc, char *argv[])
 	unsigned int order = stoi(argv[4]);
 
 	// stepsize and order for reachability analysis
-	setting.setFixedStepsize(0.01, order);
+	setting.setFixedStepsize(0.002, order);
+	// setting.setAdaptiveStepsize(1e-6, 0.01, order);
 
 	// time horizon for a single control step
 	setting.setTime(0.2);
