@@ -1,0 +1,2 @@
+cd ReachNN/flowstar/ &&\
+make
